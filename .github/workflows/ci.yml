@@ -35,25 +35,26 @@ jobs:
       - name: Pytest
         run: pytest
 
+  # Dogfood the composite action against the deliberately vulnerable demo
+  # stack. The stack is meant to fail, so the gate is disabled (fail-on: never)
+  # and the run documents the findings in the job summary instead.
   demo-scan:
     runs-on: ubuntu-latest
     needs: test
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Scan the demo stack with the Portcullis action
+        id: portcullis
+        uses: ./
         with:
-          python-version: "3.12"
-          cache: pip
-      - name: Install package
-        run: pip install .
-      - name: Scan the demo stack (markdown report)
-        # The demo stack is deliberately vulnerable: the scan documents its
-        # findings but must never fail the job, so we do not gate on it.
-        run: portcullis scan examples/demo-stack --format markdown --no-trivy -o portcullis-report.md
-      - name: Scan the demo stack (human-readable log)
-        run: portcullis scan examples/demo-stack --no-trivy
-      - name: Upload markdown report
+          path: examples/demo-stack
+          fail-on: never
+      - name: Show the action outputs
+        run: echo "grade=${{ steps.portcullis.outputs.grade }} score=${{ steps.portcullis.outputs.score }}"
+      - name: Upload the report
         uses: actions/upload-artifact@v4
         with:
           name: portcullis-report
-          path: portcullis-report.md
+          path: |
+            portcullis-report.md
+            portcullis-report.json
