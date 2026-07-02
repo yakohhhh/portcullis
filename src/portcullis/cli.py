@@ -11,7 +11,13 @@ from portcullis import __version__, scanner
 from portcullis.discovery import DiscoveryError
 from portcullis.model import Severity
 from portcullis.parsers.compose import ComposeParseError
-from portcullis.report import render_html, render_markdown, render_terminal
+from portcullis.report import render_html, render_json, render_markdown, render_terminal
+
+_TEXT_RENDERERS = {
+    "markdown": render_markdown,
+    "html": render_html,
+    "json": render_json,
+}
 
 SEVERITY_CHOICES = [s.name.lower() for s in sorted(Severity, reverse=True)]
 
@@ -29,10 +35,10 @@ def main() -> None:
 
 @main.command()
 @click.argument("path", type=click.Path(exists=True, path_type=Path), default=".")
-@click.option("--format", "fmt", type=click.Choice(["terminal", "markdown", "html"]),
+@click.option("--format", "fmt", type=click.Choice(["terminal", "markdown", "html", "json"]),
               default="terminal", show_default=True, help="Report format.")
 @click.option("--output", "-o", type=click.Path(path_type=Path), default=None,
-              help="Write the report to a file instead of stdout (markdown/html).")
+              help="Write the report to a file instead of stdout (markdown/html/json).")
 @click.option("--min-severity", type=click.Choice(SEVERITY_CHOICES), default="info",
               show_default=True, help="Hide findings below this severity.")
 @click.option("--fail-on", type=click.Choice([*SEVERITY_CHOICES, "never"]), default="never",
@@ -54,8 +60,8 @@ def scan(path: Path, fmt: str, output: Path | None, min_severity: str,
         click.echo(f"warning: {warning}", err=True)
 
     threshold = Severity.from_name(min_severity)
-    if fmt in ("markdown", "html"):
-        renderer = render_markdown if fmt == "markdown" else render_html
+    renderer = _TEXT_RENDERERS.get(fmt)
+    if renderer is not None:
         text = renderer(result, min_severity=threshold)
         if output:
             output.write_text(text, encoding="utf-8")
@@ -65,7 +71,8 @@ def scan(path: Path, fmt: str, output: Path | None, min_severity: str,
     else:
         render_terminal(result, min_severity=threshold)
         if output:
-            click.echo("Note: --output is only used with --format markdown or html.", err=True)
+            click.echo("Note: --output is only used with a file format "
+                       "(markdown/html/json).", err=True)
 
     if fail_on != "never" and result.findings:
         gate = Severity.from_name(fail_on)

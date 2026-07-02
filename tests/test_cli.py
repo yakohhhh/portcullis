@@ -145,6 +145,39 @@ class TestHtmlFormat:
         assert "Report written to" in result.output
 
 
+class TestJsonFormat:
+    def test_json_report_on_stdout_is_valid(self, runner: CliRunner, tmp_path: Path) -> None:
+        import json as _json
+
+        stack = write_stack(tmp_path / "stack", CLEAN_COMPOSE)
+        result = runner.invoke(
+            main,
+            ["scan", str(stack), "--no-trivy", "--format", "json"],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+        doc = _json.loads(result.output)
+        assert doc["tool"] == "portcullis"
+        assert doc["schema_version"]
+        assert any(s["name"] == "myapp" for s in doc["services"])
+
+    def test_json_report_written_to_a_file(self, runner: CliRunner, tmp_path: Path) -> None:
+        import json as _json
+
+        stack = write_stack(tmp_path / "stack", CLEAN_COMPOSE)
+        report = tmp_path / "report.json"
+        result = runner.invoke(
+            main,
+            ["scan", str(stack), "--no-trivy", "--format", "json", "-o", str(report)],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+        assert report.is_file()
+        doc = _json.loads(report.read_text(encoding="utf-8"))
+        assert doc["grade"] == "A"
+        assert "Report written to" in result.output
+
+
 class TestScanErrors:
     def test_directory_without_compose_file_fails_cleanly(
         self, runner: CliRunner, tmp_path: Path

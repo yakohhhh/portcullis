@@ -92,8 +92,8 @@ portcullis scan .
 | Option | Default | Description |
 | --- | --- | --- |
 | `PATH` | `.` | A compose file, or a directory walked recursively. |
-| `--format terminal\|markdown\|html` | `terminal` | Report format. |
-| `-o, --output FILE` | stdout | Write the markdown/html report to a file. |
+| `--format terminal\|markdown\|html\|json` | `terminal` | Report format. |
+| `-o, --output FILE` | stdout | Write the markdown/html/json report to a file. |
 | `--min-severity LEVEL` | `info` | Hide findings below `info`/`low`/`medium`/`high`/`critical`. |
 | `--fail-on LEVEL` | `never` | Exit with code 1 if any finding is at or above LEVEL (CI gate). |
 | `--trivy` / `--no-trivy` | auto | Force or disable Trivy (default: used when the binary is found). |
@@ -177,12 +177,13 @@ its own behaviour, and is entirely opt-out with `--no-trivy`.)
 - **M1 - Core scan** (done, v0.1): compose discovery and parsing, exposure engine, rules
   PC-001..PC-011, app knowledge base, A-F grade, terminal and markdown reports, Trivy merge,
   `--fail-on` CI gate.
-- **M2 - Reverse proxy configuration files**: Traefik (static `traefik.yml`/`.toml`, `command:`
-  flags, dynamic file provider) and Caddyfile parsing are **done**; a wider knowledge base is in
-  progress.
+- **M2 - Reverse proxy configuration files** (done): Traefik (static `traefik.yml`/`.toml`,
+  `command:` flags, dynamic file provider) and Caddyfile parsing, plus a knowledge base grown to
+  90+ applications.
 - **M3 - Reports and enrichment** (done): self-contained HTML report (`--format html`) and a
   richer Trivy merge (image CVEs, committed secrets, Dockerfile misconfigurations).
-- **M4 - GitHub Action** and packaging / PyPI release.
+- **M4 - Industrialisation**: machine-readable JSON output (`--format json`) is **done**; a GitHub
+  Action, PyPI release automation, and macOS/Windows CI are in progress.
 
 Then, v2 ideas: Nginx Proxy Manager support, a live reachability probe to confirm exposure from
 the outside, and a web report.
