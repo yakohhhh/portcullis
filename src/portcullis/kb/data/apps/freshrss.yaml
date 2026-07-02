@@ -1,0 +1,22 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: freshrss
+name: FreshRSS
+category: feeds
+sensitivity: medium
+images:
+  - freshrss/freshrss
+  - linuxserver/freshrss
+  - freshrss
+default_ports: [80]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  FreshRSS is a self-hosted RSS aggregator that stores your full reading history, subscribed
+  feeds, and the login credentials for any authenticated or private feeds you follow. An attacker
+  who reaches the admin account can read everything you follow, add users, and pull the stored feed
+  passwords; older or misconfigured instances have also exposed server-side request forgery through
+  the feed-fetching feature. Put it behind an authenticating reverse proxy rather than exposing the
+  raw port to the Internet.
+references:
+  - https://freshrss.github.io/FreshRSS/
+  - https://hub.docker.com/r/freshrss/freshrss

@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: plausible
+name: Plausible Analytics
+category: analytics
+sensitivity: medium
+images:
+  - ghcr.io/plausible/community-edition
+  - plausible/analytics
+  - plausible/community-edition
+default_ports: [8000]
+default_credentials: false
+risk_note: >
+  Plausible is a privacy-focused web analytics tool, and its dashboard shows traffic and visitor
+  statistics for every site you track. An attacker who reaches the login can read that data, add or
+  remove tracked sites, and access API keys used for reporting. The tracking script and event
+  endpoint are meant to be public, but keep the admin dashboard and its login behind a reverse
+  proxy with a strong password.
+exposure: proxy-only
+references:
+  - https://github.com/plausible/community-edition
+  - https://plausible.io/docs/self-hosting

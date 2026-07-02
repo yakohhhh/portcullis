@@ -1,0 +1,19 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: kavita
+name: Kavita
+category: media
+sensitivity: medium
+images:
+  - jvmilazz0/kavita
+  - kizaing/kavita
+  - kavita
+default_ports: [5000]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Kavita serves your comics, manga, and ebook library and manages user accounts, invites, and
+  reading progress. An attacker who reaches the web interface or API can seize the admin account,
+  invite themselves as users, and pull down your entire collection. Keep it behind a reverse proxy
+  that enforces HTTPS and authentication rather than exposing it directly.
+references:
+  - https://wiki.kavitareader.com/installation/docker

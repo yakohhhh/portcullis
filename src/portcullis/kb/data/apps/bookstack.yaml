@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: bookstack
+name: BookStack
+category: documents
+sensitivity: high
+images:
+  - linuxserver/bookstack
+  - solidnerd/bookstack
+  - bookstack
+default_ports: [80, 6875]
+default_credentials: true
+exposure: proxy-only
+risk_note: >
+  BookStack is a self-hosted wiki and documentation platform that often holds internal runbooks,
+  procedures, and other sensitive notes. It ships a well-known default admin login
+  (admin@admin.com / password) created on first run, so an attacker who reaches an unchanged
+  instance can read every page, edit or delete content, and add users to keep access. Change the
+  default credentials and put it behind an authenticating reverse proxy.
+references:
+  - https://www.bookstackapp.com/docs/admin/installation/
+  - https://docs.linuxserver.io/images/docker-bookstack/

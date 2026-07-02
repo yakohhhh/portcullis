@@ -1,0 +1,20 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: unifi-network-application
+name: UniFi Network Application
+category: network
+sensitivity: high
+images:
+  - linuxserver/unifi-network-application
+  - jacobalberty/unifi
+  - unifi-network-application
+default_ports: [8443, 8080, 3478, 8843, 8880, 6789, 10001]
+default_credentials: false
+exposure: lan
+risk_note: >
+  This is the controller that provisions and manages your UniFi switches, access points, and
+  gateways. An attacker who reaches the admin interface can take over your entire network: change
+  firewall rules, capture or reroute traffic, push malicious firmware to devices, and read Wi-Fi
+  passwords stored in the site configuration. Keep it on the LAN or behind an authenticating proxy;
+  the inform and STUN ports (8080, 3478) only need to be reachable by your own devices.
+references:
+  - https://docs.linuxserver.io/images/docker-unifi-network-application/

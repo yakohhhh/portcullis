@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: jackett
+name: Jackett
+category: media-automation
+sensitivity: medium
+images:
+  - linuxserver/jackett
+  - ghcr.io/linuxserver/jackett
+  - jackett
+default_ports: [9117]
+default_credentials: false
+exposure: lan
+risk_note: >
+  Jackett is a proxy that translates tracker searches for the *arr apps, so it stores the logins,
+  cookies and API keys for every private tracker you configure. An attacker who reaches its web UI
+  or API key can read those stored tracker credentials and search on your behalf. It has no user
+  accounts by default, so anyone who can reach the port controls it. Keep it on the LAN or behind an
+  authenticating proxy.
+references:
+  - https://github.com/Jackett/Jackett
+  - https://docs.linuxserver.io/images/docker-jackett/

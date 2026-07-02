@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: vikunja
+name: Vikunja
+category: productivity
+sensitivity: medium
+images:
+  - vikunja/vikunja
+  - vikunja/api
+  - vikunja
+default_ports: [3456]
+default_credentials: false
+risk_note: >
+  Vikunja is a self-hosted to-do and project manager. Its tasks, notes, attachments and comments often
+  contain sensitive personal or work detail - deadlines, plans, links and credentials people paste into
+  descriptions. An attacker with access to an over-exposed instance can read and alter all your projects,
+  register or take over accounts if signups are open, and use API tokens to script further access. Keep it
+  behind an authenticating reverse proxy and disable open registration if you do not need it.
+exposure: proxy-only
+references:
+  - https://vikunja.io/docs/full-docker-example/
+  - https://hub.docker.com/r/vikunja/vikunja

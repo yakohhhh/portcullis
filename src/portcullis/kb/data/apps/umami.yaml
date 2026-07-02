@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: umami
+name: Umami
+category: analytics
+sensitivity: medium
+images:
+  - ghcr.io/umami-software/umami
+  - umami-software/umami
+  - umami
+default_ports: [3000]
+default_credentials: true
+risk_note: >
+  Umami collects visitor analytics for your sites, and its dashboard reveals traffic and visitor
+  data across every property you track. Fresh installs ship a well-known default login
+  (admin / umami) that must be changed immediately, or anyone can log in and read your data, add
+  tracked sites, and manage users. The tracking script endpoint is meant to be public, but keep the
+  admin dashboard behind a reverse proxy with a changed password.
+exposure: proxy-only
+references:
+  - https://umami.is/docs/install
+  - https://github.com/umami-software/umami/pkgs/container/umami

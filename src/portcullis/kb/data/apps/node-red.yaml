@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: node-red
+name: Node-RED
+category: home-automation
+sensitivity: high
+images:
+  - nodered/node-red
+  - node-red
+default_ports: [1880]
+default_credentials: false
+exposure: lan
+risk_note: >
+  Node-RED is a flow editor that runs arbitrary logic, and its flows can execute code and shell
+  commands directly on the container and reach the host. Out of the box the editor has no login,
+  so anyone who reaches it can add a flow that runs commands, read the credentials stored in your
+  flows (API keys, database and MQTT logins), and pivot into your home network. Never expose it to
+  the Internet directly - keep it on the LAN or behind an authenticating proxy and turn on
+  adminAuth.
+references:
+  - https://nodered.org/docs/getting-started/docker
+  - https://nodered.org/docs/user-guide/runtime/securing-node-red

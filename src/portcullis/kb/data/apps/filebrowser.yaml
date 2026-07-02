@@ -1,0 +1,22 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: filebrowser
+name: File Browser
+category: files
+sensitivity: high
+images:
+  - filebrowser/filebrowser
+  - filebrowser
+default_ports: [80]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  File Browser is a web UI that browses, uploads, downloads, and edits files in whatever directory
+  you mount into it. On first run it auto-creates an admin user with a randomly generated password
+  printed once in the container logs - so an operator who never reads the logs may leave a
+  half-configured instance open. Anyone who gets in can read and delete every mounted file, and the
+  command-execution feature lets an admin run arbitrary shell commands on the container or host.
+  Read the initial password from the logs, change it, and keep the instance behind an
+  authenticating reverse proxy.
+references:
+  - https://filebrowser.org/installation
+  - https://hub.docker.com/r/filebrowser/filebrowser

@@ -1,0 +1,20 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: wallabag
+name: Wallabag
+category: feeds
+sensitivity: medium
+images:
+  - wallabag/wallabag
+  - wallabag
+default_ports: [80]
+default_credentials: true
+risk_note: >
+  Wallabag is a read-it-later service that saves the full text of every article you bookmark, so
+  it holds a detailed record of what you read and research. The official image ships a well-known
+  default admin login (wallabag/wallabag) that must be changed immediately, or anyone can take over
+  the instance, read your saved content, and reach the fetch feature that pulls arbitrary URLs
+  server-side. Change the default credentials and keep it behind an authenticating reverse proxy.
+exposure: proxy-only
+references:
+  - https://doc.wallabag.org/admin/installation/installation/
+  - https://hub.docker.com/r/wallabag/wallabag

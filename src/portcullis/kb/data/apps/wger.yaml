@@ -1,0 +1,22 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: wger
+name: wger
+category: productivity
+sensitivity: low
+images:
+  - wger/server
+  - wger/apache
+  - "*/wger"
+default_ports: [80]
+default_credentials: true
+risk_note: >
+  wger is a self-hosted workout and fitness tracker. Its Docker stack ships a demo admin account
+  (admin / adminadmin) that must be changed at once. Beyond that, the data - body weight, measurements,
+  workout logs and nutrition diaries - is health-adjacent and personal, and an admin login controls all
+  users. If the instance is over-exposed with the default password or open registration, an attacker can
+  read that personal health data and take over the admin panel. Keep it behind an authenticating reverse
+  proxy and change the demo credentials immediately.
+exposure: proxy-only
+references:
+  - https://wger.readthedocs.io/en/latest/production/docker.html
+  - https://hub.docker.com/r/wger/server

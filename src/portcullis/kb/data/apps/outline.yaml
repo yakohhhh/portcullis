@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: outline
+name: Outline
+category: documents
+sensitivity: high
+images:
+  - outlinewiki/outline
+  - docker.getoutline.com/outlinewiki/outline
+  - outline
+default_ports: [3000]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Outline is a team knowledge base and wiki that holds internal documents, notes, and the access
+  tokens for whatever integrations you connect. It authenticates through an external provider such
+  as Google or an OIDC service, so a weak or misconfigured login lets an attacker read and edit
+  every document, and its API tokens grant the same access programmatically. Keep it behind an
+  authenticating reverse proxy with HTTPS and lock down the sign-in provider.
+references:
+  - https://docs.getoutline.com/s/hosting/doc/docker-7pfeLP5a8t
+  - https://hub.docker.com/r/outlinewiki/outline

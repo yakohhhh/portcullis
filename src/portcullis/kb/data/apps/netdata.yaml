@@ -1,0 +1,20 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: netdata
+name: Netdata
+category: monitoring
+sensitivity: high
+images:
+  - netdata/netdata
+  - netdata
+default_ports: [19999]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Netdata's dashboard ships with no authentication, so anyone who reaches port 19999 sees deep
+  real-time detail about your host: running processes, network connections, disk and memory usage,
+  container names, and installed services. That map of your infrastructure is a gift to an
+  attacker planning further intrusion, and it can leak sensitive hostnames or workloads. Keep it
+  on the LAN or behind an authenticating reverse proxy, never directly on the Internet.
+references:
+  - https://learn.netdata.cloud/docs/netdata-agent/installation/docker
+  - https://hub.docker.com/r/netdata/netdata

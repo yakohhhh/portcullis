@@ -1,0 +1,22 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: jellyseerr
+name: Jellyseerr
+category: media-automation
+sensitivity: medium
+images:
+  - fallenbagel/jellyseerr
+  - ghcr.io/fallenbagel/jellyseerr
+  - jellyseerr
+default_ports: [5055]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Jellyseerr is a request front-end (an Overseerr fork) for Jellyfin, Emby and Plex that talks to
+  Sonarr and Radarr, so it stores their addresses and API keys plus a media-server authentication
+  token. An attacker who reaches the admin account can read those stored keys, drive the download
+  apps, and enumerate your media-server users. It is often published to the Internet for users to
+  request media, so only expose it behind a reverse proxy that enforces authentication and keep the
+  app itself patched.
+references:
+  - https://docs.jellyseerr.dev/
+  - https://github.com/Fallenbagel/jellyseerr

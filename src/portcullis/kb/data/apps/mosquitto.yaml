@@ -1,0 +1,22 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: mosquitto
+name: Eclipse Mosquitto
+category: home-automation
+sensitivity: high
+images:
+  - eclipse-mosquitto
+  - library/eclipse-mosquitto
+  - mosquitto
+default_ports: [1883, 8883, 9001]
+default_credentials: false
+exposure: never
+risk_note: >
+  Mosquitto is the MQTT message broker that carries the traffic between your smart-home devices
+  and controllers. In its common configuration it allows anonymous connections, so anyone who can
+  reach port 1883 can subscribe to every topic and read the full state of your home, and can also
+  publish messages that switch devices, unlock things, or trigger automations. Keep it bound to
+  loopback or the internal Docker network, require a username and password, and never publish the
+  port to the Internet.
+references:
+  - https://hub.docker.com/_/eclipse-mosquitto
+  - https://mosquitto.org/documentation/authentication-methods/

@@ -1,0 +1,22 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: scrypted
+name: Scrypted
+category: home-automation
+sensitivity: high
+images:
+  - koush/scrypted
+  - ghcr.io/koush/scrypted
+  - scrypted
+default_ports: [10443, 11080]
+default_credentials: false
+exposure: lan
+risk_note: >
+  Scrypted is a camera and smart-home hub that aggregates your cameras and bridges them to HomeKit,
+  Google and Alexa. Whoever reaches its management console can view the live and recorded camera
+  feeds, read the stored camera and cloud-account credentials, and install plugins that run code
+  on the host. It prompts you to create an admin account on first launch, so an unprotected fresh
+  install can be claimed by whoever gets there first. Keep it on the LAN or behind an authenticating
+  proxy.
+references:
+  - https://docs.scrypted.app/installation.html
+  - https://github.com/koush/scrypted

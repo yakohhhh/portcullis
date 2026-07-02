@@ -1,0 +1,20 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: homepage
+name: Homepage
+category: dashboard
+sensitivity: medium
+images:
+  - ghcr.io/gethomepage/homepage
+  - homepage
+default_ports: [3000]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Homepage is a start-page dashboard that links to all of your self-hosted services and often
+  embeds live widgets. To power those widgets you paste API keys and passwords for things like your
+  media, download, and monitoring apps into its config, so an attacker who reaches the page can read
+  those secrets and get a full map of your internal services. It has no built-in login of its own, so
+  put it behind an authenticating reverse proxy and do not expose it directly to the Internet.
+references:
+  - https://gethomepage.dev/
+  - https://github.com/gethomepage/homepage

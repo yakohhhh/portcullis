@@ -1,0 +1,19 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: omada-controller
+name: Omada Controller
+category: network
+sensitivity: high
+images:
+  - mbentley/omada-controller
+  - omada-controller
+default_ports: [8043, 8088, 27001, 29810, 29811, 29812, 29813]
+default_credentials: false
+exposure: lan
+risk_note: >
+  The Omada software controller manages TP-Link Omada switches, access points, and gateways. An
+  attacker who reaches the admin interface owns your network: they can rewrite firewall and VLAN
+  rules, redirect or sniff traffic, adopt or reflash devices, and read the Wi-Fi passwords held in
+  the site settings. Keep it on the LAN or behind an authenticating reverse proxy; the device
+  discovery and adoption ports only need to be reachable by your own hardware.
+references:
+  - https://github.com/mbentley/docker-omada-controller

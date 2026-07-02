@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: frigate
+name: Frigate
+category: home-automation
+sensitivity: high
+images:
+  - ghcr.io/blakeblackshear/frigate
+  - blakeblackshear/frigate
+  - frigate
+default_ports: [5000, 8971, 1935, 8554]
+default_credentials: false
+exposure: lan
+risk_note: >
+  Frigate is an NVR with object detection that ingests every camera in your home or office. Anyone
+  who reaches its web UI or API can watch the live feeds, download recorded clips, and read the RTSP
+  URLs and camera passwords stored in its config, effectively giving them eyes inside your property
+  and the keys to your cameras. Some versions expose the UI without any login. Keep it on the LAN
+  or behind an authenticating proxy and never publish it directly to the Internet.
+references:
+  - https://docs.frigate.video/frigate/installation
+  - https://github.com/blakeblackshear/frigate

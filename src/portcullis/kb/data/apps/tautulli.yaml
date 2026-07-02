@@ -1,0 +1,22 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: tautulli
+name: Tautulli
+category: monitoring
+sensitivity: medium
+images:
+  - tautulli/tautulli
+  - linuxserver/tautulli
+  - ghcr.io/tautulli/tautulli
+  - tautulli
+default_ports: [8181]
+default_credentials: false
+exposure: lan
+risk_note: >
+  Tautulli is an analytics and monitoring dashboard for Plex, so it stores your Plex server address
+  and API token along with a detailed history of who watched what and when. An attacker who reaches
+  its web UI or API key can read that Plex token, profile your users and viewing habits, and abuse
+  the notification-agent and custom-script settings to run commands on the container or host. Keep
+  it on the LAN or behind an authenticating proxy.
+references:
+  - https://github.com/Tautulli/Tautulli
+  - https://docs.linuxserver.io/images/docker-tautulli/

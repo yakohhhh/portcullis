@@ -1,0 +1,20 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: ntfy
+name: ntfy
+category: monitoring
+sensitivity: medium
+images:
+  - binwiederhier/ntfy
+  - ntfy
+default_ports: [80]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  ntfy is a push-notification server that, by default, lets anyone subscribe to or publish on any
+  topic without a login. If exposed, an attacker who guesses or learns your topic names can read
+  the alerts you receive and inject fake notifications to mislead you. Since topics are often used
+  for server and security alerts, this can leak infrastructure detail. Enable access control and
+  keep it behind an authenticating reverse proxy.
+references:
+  - https://docs.ntfy.sh/install/
+  - https://hub.docker.com/r/binwiederhier/ntfy

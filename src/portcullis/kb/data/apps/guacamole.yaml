@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: guacamole
+name: Apache Guacamole
+category: remote-access
+sensitivity: critical
+images:
+  - guacamole/guacamole
+  - guacamole/guacd
+  - guacamole
+default_ports: [8080, 4822]
+default_credentials: true
+exposure: proxy-only
+risk_note: >
+  Guacamole is a clientless remote desktop gateway that brokers RDP, VNC, and SSH connections from
+  your browser. It ships with a well-known default login (guacadmin/guacadmin), and anyone who logs
+  in gets a ready-made jump host into every machine you have stored connections for, including the
+  saved passwords and private keys. If exposed with that default account still active an attacker
+  walks straight into your internal systems. Change the default credentials immediately and only
+  publish it behind a reverse proxy that enforces its own authentication.
+references:
+  - https://guacamole.apache.org/doc/gug/guacamole-docker.html

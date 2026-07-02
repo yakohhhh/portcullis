@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: tandoor
+name: Tandoor Recipes
+category: productivity
+sensitivity: low
+images:
+  - vabene1111/recipes
+  - ghcr.io/tandoorrecipes/recipes
+  - recipes
+default_ports: [8080]
+default_credentials: false
+risk_note: >
+  Tandoor is a recipe and meal-planning manager. It has no default login, but its accounts hold your
+  shopping lists, meal plans and any shared household data, and an admin account can create users and
+  manage the whole space. If the instance is over-exposed without authentication, an attacker can read
+  and tamper with all of that and abuse the admin panel; the data itself is low value, so the main
+  concern is an open admin interface. Keep it behind an authenticating reverse proxy.
+exposure: proxy-only
+references:
+  - https://docs.tandoor.dev/install/docker/
+  - https://github.com/TandoorRecipes/recipes/pkgs/container/recipes

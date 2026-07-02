@@ -1,0 +1,19 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: calibre-web
+name: Calibre-Web
+category: media
+sensitivity: medium
+images:
+  - linuxserver/calibre-web
+  - calibre-web
+default_ports: [8083]
+default_credentials: true
+exposure: proxy-only
+risk_note: >
+  Calibre-Web ships with a well-known default login of admin / admin123, so any exposed instance
+  that has not been reconfigured is trivially taken over. Beyond browsing and downloading your whole
+  ebook library, an admin can manage users and change settings, and its upload and format-conversion
+  features have a history of remote code execution flaws. Change the default password immediately and
+  keep it behind a reverse proxy with HTTPS and authentication.
+references:
+  - https://github.com/janeczku/calibre-web

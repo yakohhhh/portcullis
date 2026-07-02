@@ -1,0 +1,22 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: rustdesk-server
+name: RustDesk Server
+category: remote-access
+sensitivity: high
+images:
+  - rustdesk/rustdesk-server
+  - rustdesk/rustdesk-server-s6
+  - rustdesk/rustdesk-server-pro
+  - rustdesk-server
+default_ports: [21115, 21116, 21117, 21118, 21119]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  This is the self-hosted relay and rendezvous server (hbbs/hbbr) that brokers RustDesk remote
+  desktop sessions. It has to be reachable from the Internet to work, but its key job is pairing
+  clients, so protect the public key and any access key: an attacker who obtains them can register
+  rogue clients, act as a man-in-the-middle relay for your remote sessions, or lure your devices to
+  connect to a server they control. Run the recent versions that require a key, keep that key
+  secret, and monitor which clients are connecting.
+references:
+  - https://rustdesk.com/docs/en/self-host/rustdesk-server-oss/docker/

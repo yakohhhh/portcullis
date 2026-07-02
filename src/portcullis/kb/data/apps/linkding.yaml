@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: linkding
+name: linkding
+category: feeds
+sensitivity: medium
+images:
+  - sissbruecker/linkding
+  - ghcr.io/sissbruecker/linkding
+  - linkding
+default_ports: [9090]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  linkding is a self-hosted bookmark manager whose superuser is created at deploy time from
+  environment variables. An attacker who reaches that account gets your entire bookmark collection
+  and notes, the REST API token used by browser extensions and mobile apps, and any shared or
+  archived pages. It is single-user oriented and has no brute-force protection of its own, so keep
+  it behind an authenticating reverse proxy instead of exposing the port directly.
+references:
+  - https://linkding.link/installation/
+  - https://github.com/sissbruecker/linkding

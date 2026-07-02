@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: overseerr
+name: Overseerr
+category: media-automation
+sensitivity: medium
+images:
+  - sctx/overseerr
+  - linuxserver/overseerr
+  - overseerr
+default_ports: [5055]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Overseerr is a request front-end for Plex libraries that talks to Sonarr and Radarr, so it stores
+  their addresses and API keys plus a Plex authentication token. An attacker who reaches the admin
+  account can read those stored keys, drive the download apps, and enumerate your Plex users. It is
+  often published to the Internet for users to request media, so only expose it behind a reverse
+  proxy that enforces authentication and keep the app itself patched.
+references:
+  - https://docs.overseerr.dev/
+  - https://github.com/sct/overseerr

@@ -1,0 +1,22 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: dashy
+name: Dashy
+category: dashboard
+sensitivity: medium
+images:
+  - lissy93/dashy
+  - ghcr.io/lissy93/dashy
+  - dashy
+default_ports: [8080]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Dashy is a homelab start-page that aggregates links to your services and can display status
+  widgets that call their APIs, so its config often holds API keys and internal URLs. An attacker who
+  reaches it gets a directory of everything you run plus any embedded secrets, and its optional
+  status-check and widget features can be pointed at internal hosts. Its built-in authentication is
+  client-side and weak, so keep it behind an authenticating reverse proxy rather than exposed
+  directly.
+references:
+  - https://dashy.to/docs/
+  - https://github.com/Lissy93/dashy

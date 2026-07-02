@@ -1,0 +1,22 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: actualbudget
+name: Actual Budget
+category: finance
+sensitivity: high
+images:
+  - actualbudget/actual-server
+  - ghcr.io/actualbudget/actual-server
+  - actual-server
+default_ports: [5006]
+default_credentials: false
+risk_note: >
+  Actual Budget is a self-hosted budgeting app that stores your full budget and transaction history, and
+  with bank-sync enabled it can hold linked-account data too. It has no default password (you set the server
+  password at first run), but that single password guards everything. If it is over-exposed and the password
+  is weak or leaked, an attacker can open your encrypted-or-not budget files, see all your spending, balances
+  and payees, and download the data. Keep it behind an authenticating reverse proxy and use a strong,
+  unique server password.
+exposure: proxy-only
+references:
+  - https://actualbudget.org/docs/install/docker
+  - https://hub.docker.com/r/actualbudget/actual-server

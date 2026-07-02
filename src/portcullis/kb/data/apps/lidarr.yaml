@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: lidarr
+name: Lidarr
+category: media-automation
+sensitivity: medium
+images:
+  - linuxserver/lidarr
+  - hotio/lidarr
+  - ghcr.io/hotio/lidarr
+  - lidarr
+default_ports: [8686]
+default_credentials: false
+exposure: lan
+risk_note: >
+  Lidarr's web interface and API key hand over your whole music download pipeline: an attacker can
+  read the stored credentials of your download clients and indexers, browse and change your library,
+  and the custom-scripts feature lets them run arbitrary commands on the container or host. Keep it
+  on the LAN or behind an authenticating proxy.
+references:
+  - https://wiki.servarr.com/lidarr
+  - https://docs.linuxserver.io/images/docker-lidarr/

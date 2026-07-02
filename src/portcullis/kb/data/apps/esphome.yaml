@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: esphome
+name: ESPHome
+category: home-automation
+sensitivity: high
+images:
+  - esphome/esphome
+  - ghcr.io/esphome/esphome
+  - esphome
+default_ports: [6052]
+default_credentials: false
+exposure: lan
+risk_note: >
+  ESPHome is the dashboard that builds and flashes firmware onto your ESP microcontrollers -
+  sensors, switches, relays and other devices around the house. It has no login by default, so
+  anyone who reaches it can compile and push malicious firmware to your devices, read the Wi-Fi
+  passwords and API keys embedded in each device config, and use the built-in code editor to run
+  content on the host. Keep it on the LAN or behind an authenticating proxy.
+references:
+  - https://esphome.io/guides/getting_started_command_line
+  - https://esphome.io/guides/getting_started_hassio
