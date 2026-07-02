@@ -76,7 +76,10 @@ forwarded, it is Internet-facing and the findings only get more urgent. Details 
 ## Quickstart
 
 ```sh
-# with pipx (recommended)
+# from PyPI (once released)
+pipx install portcullis
+
+# the latest from git
 pipx install git+https://github.com/yakohhhh/portcullis
 
 # or with pip, from source
@@ -220,8 +223,9 @@ its own behaviour, and is entirely opt-out with `--no-trivy`.)
   90+ applications.
 - **M3 - Reports and enrichment** (done): self-contained HTML report (`--format html`) and a
   richer Trivy merge (image CVEs, committed secrets, Dockerfile misconfigurations).
-- **M4 - Industrialisation**: machine-readable JSON output (`--format json`) and a GitHub Action
-  are **done**; PyPI release automation and macOS/Windows CI are in progress.
+- **M4 - Industrialisation** (done): machine-readable JSON output (`--format json`), a GitHub
+  Action, macOS/Windows CI, and automated PyPI releases via trusted publishing (see
+  [RELEASING.md](RELEASING.md)).
 
 Then, v2 ideas: Nginx Proxy Manager support, a live reachability probe to confirm exposure from
 the outside, and a web report.

@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "portcullis-audit"
+name = "portcullis"
 version = "0.1.0.dev0"
 description = "Security auditor for self-hosted infrastructures - see what your stack really exposes to the Internet, and how to fix it."
 readme = "README.md"
