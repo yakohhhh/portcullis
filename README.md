@@ -141,6 +141,40 @@ portcullis scan . --format markdown -o report.md --fail-on high
 portcullis scan . --format html -o report.html   # self-contained, no external requests
 ```
 
+## GitHub Action
+
+Run Portcullis on every push and pull request. The action writes the report to the job summary,
+optionally comments it on the PR, and fails the job above a severity threshold.
+
+```yaml
+# .github/workflows/portcullis.yml
+name: Portcullis
+on: [push, pull_request]
+permissions:
+  contents: read
+  pull-requests: write   # only needed for comment-on-pr
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: yakohhhh/portcullis@v1
+        with:
+          path: .            # a compose file or a directory tree
+          fail-on: high      # critical | high | medium | low | info | never
+          comment-on-pr: true
+```
+
+| Input | Default | Description |
+| --- | --- | --- |
+| `path` | `.` | Compose file or directory to scan. |
+| `fail-on` | `high` | Fail the job at or above this severity (`never` to never fail). |
+| `min-severity` | `info` | Hide findings below this severity in the report. |
+| `trivy` | `false` | Also run Trivy when available. |
+| `comment-on-pr` | `false` | Post the report as a PR comment. |
+
+Outputs: `grade` (A-F) and `score` (0-100).
+
 ## Trivy integration
 
 Portcullis deliberately does not reimplement what [Trivy](https://github.com/aquasecurity/trivy)
@@ -182,8 +216,8 @@ its own behaviour, and is entirely opt-out with `--no-trivy`.)
   90+ applications.
 - **M3 - Reports and enrichment** (done): self-contained HTML report (`--format html`) and a
   richer Trivy merge (image CVEs, committed secrets, Dockerfile misconfigurations).
-- **M4 - Industrialisation**: machine-readable JSON output (`--format json`) is **done**; a GitHub
-  Action, PyPI release automation, and macOS/Windows CI are in progress.
+- **M4 - Industrialisation**: machine-readable JSON output (`--format json`) and a GitHub Action
+  are **done**; PyPI release automation and macOS/Windows CI are in progress.
 
 Then, v2 ideas: Nginx Proxy Manager support, a live reachability probe to confirm exposure from
 the outside, and a web report.

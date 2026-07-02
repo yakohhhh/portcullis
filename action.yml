@@ -1,0 +1,107 @@
+name: Portcullis security scan
+description: >-
+  Audit a self-hosted stack's docker-compose exposure and foot-guns, publish a
+  report to the job summary, and fail the job above a severity threshold.
+branding:
+  icon: shield
+  color: blue
+
+inputs:
+  path:
+    description: Path to scan (a compose file or a directory tree).
+    required: false
+    default: "."
+  fail-on:
+    description: >-
+      Fail the job if any finding is at or above this severity
+      (critical | high | medium | low | info | never).
+    required: false
+    default: high
+  min-severity:
+    description: Hide findings below this severity in the report.
+    required: false
+    default: info
+  trivy:
+    description: Run Trivy too, when the binary is available (true | false).
+    required: false
+    default: "false"
+  comment-on-pr:
+    description: >-
+      Post the report as a pull-request comment (true | false). Requires the
+      job to grant `pull-requests: write`.
+    required: false
+    default: "false"
+  python-version:
+    description: Python version used to run Portcullis.
+    required: false
+    default: "3.12"
+
+outputs:
+  grade:
+    description: Overall grade, A-F.
+    value: ${{ steps.scan.outputs.grade }}
+  score:
+    description: Overall score, 0-100.
+    value: ${{ steps.scan.outputs.score }}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install Portcullis
+      shell: bash
+      run: pip install "$GITHUB_ACTION_PATH"
+
+    - name: Scan and report
+      id: scan
+      shell: bash
+      env:
+        PC_PATH: ${{ inputs.path }}
+        PC_MIN: ${{ inputs.min-severity }}
+        PC_FAILON: ${{ inputs.fail-on }}
+        PC_TRIVY: ${{ inputs.trivy }}
+      run: |
+        set -uo pipefail
+        trivy_flag=--no-trivy
+        [ "$PC_TRIVY" = "true" ] && trivy_flag=--trivy
+
+        # A single scan: the CLI writes the JSON report before enforcing the
+        # gate, so the report exists whether or not the gate trips. Running
+        # once keeps a single (potentially slow) Trivy pass.
+        set +e
+        portcullis scan "$PC_PATH" $trivy_flag \
+          --min-severity "$PC_MIN" \
+          --fail-on "$PC_FAILON" \
+          --format json -o portcullis-report.json
+        gate_exit=$?
+        set -e
+
+        if [ ! -f portcullis-report.json ]; then
+          echo "::error::Portcullis could not scan '$PC_PATH'." >&2
+          exit "$gate_exit"
+        fi
+
+        python "$GITHUB_ACTION_PATH/.github/action/summarize.py"
+
+        if [ "$gate_exit" -ne 0 ]; then
+          echo "gate_failed=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "gate_failed=false" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Comment on the pull request
+      if: ${{ inputs.comment-on-pr == 'true' && github.event_name == 'pull_request' }}
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: gh pr comment "${{ github.event.pull_request.number }}" --body-file portcullis-report.md
+
+    - name: Enforce the severity gate
+      if: ${{ steps.scan.outputs.gate_failed == 'true' }}
+      shell: bash
+      run: |
+        echo "::error::Portcullis gate failed: a finding is at or above '${{ inputs.fail-on }}'."
+        exit 1
