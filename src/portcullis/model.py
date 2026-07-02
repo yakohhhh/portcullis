@@ -117,6 +117,7 @@ class Service:
     name: str
     image: ImageRef | None = None
     build: bool = False
+    command: list[str] = field(default_factory=list)
     ports: list[PortMapping] = field(default_factory=list)
     networks: list[str] = field(default_factory=list)
     network_mode: str | None = None
@@ -155,6 +156,38 @@ class Stack:
     files: list[Path] = field(default_factory=list)
     #: Non-fatal parsing problems (skipped files, ignored sections).
     warnings: list[str] = field(default_factory=list)
+
+
+@dataclass
+class RoutingTable:
+    """Which services a reverse proxy routes, discovered from file configuration.
+
+    Complements the label-based detection in :mod:`portcullis.exposure`:
+    routing declared in Traefik or Caddy configuration files rather than in
+    compose labels. A service reachable through a public entrypoint lands in
+    ``internet_routed``; one reachable only through a loopback-bound
+    entrypoint lands in ``host_routed`` (reachable from the host, not the
+    network). ``proxy_services`` records the compose services identified as
+    the reverse proxy itself.
+    """
+
+    internet_routed: set[str] = field(default_factory=set)
+    host_routed: set[str] = field(default_factory=set)
+    proxy_services: set[str] = field(default_factory=set)
+    files: list[Path] = field(default_factory=list)
+
+    def routes_to_internet(self, service_name: str) -> bool:
+        return service_name in self.internet_routed
+
+    def routes_to_host(self, service_name: str) -> bool:
+        return service_name in self.host_routed
+
+    def merge(self, other: RoutingTable) -> None:
+        """Fold another table into this one (used to combine proxies)."""
+        self.internet_routed |= other.internet_routed
+        self.host_routed |= other.host_routed
+        self.proxy_services |= other.proxy_services
+        self.files.extend(other.files)
 
 
 @dataclass

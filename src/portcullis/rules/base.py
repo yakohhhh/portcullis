@@ -12,7 +12,7 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
-from portcullis.model import Exposure, Finding, Stack
+from portcullis.model import Exposure, Finding, RoutingTable, Stack
 
 if TYPE_CHECKING:
     from portcullis.kb import KnowledgeBase
@@ -29,6 +29,7 @@ class RuleContext:
     stack: Stack
     exposures: dict[str, Exposure] = field(default_factory=dict)
     kb: KnowledgeBase | None = None
+    routing: RoutingTable = field(default_factory=RoutingTable)
 
     def exposure_of(self, service_name: str) -> Exposure:
         return self.exposures.get(service_name, Exposure.UNKNOWN)

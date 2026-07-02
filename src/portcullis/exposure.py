@@ -6,9 +6,11 @@ network, host only, internal), by crossing three signals:
 * **published ports** - every ``ports:`` entry binds a host port; binding to
   a loopback address limits it to the host, anything else is reachable from
   the local network (and from the Internet if the router forwards the port);
-* **reverse proxy routing** - a service routed by the reverse proxy
-  (Traefik or caddy-docker-proxy labels in v0.1) is considered reachable
-  from the Internet, since the proxy is typically the Internet entry point;
+* **reverse proxy routing** - a service routed by the reverse proxy is
+  considered reachable from the Internet, since the proxy is typically the
+  Internet entry point. Routing is read from compose labels (Traefik,
+  caddy-docker-proxy, nginx-proxy) and, when a :class:`RoutingTable` is
+  supplied, from Traefik/Caddy file configuration too;
 * **internal networks** - a service attached only to ``internal: true``
   networks has no gateway, so even published ports are unreachable.
 
@@ -19,13 +21,15 @@ the authentication or TLS the proxy provides.
 
 from __future__ import annotations
 
-from portcullis.model import Exposure, Service, Stack
+from portcullis.model import Exposure, RoutingTable, Service, Stack
 
 TRAEFIK_ENABLE_LABEL = "traefik.enable"
 
 
-def is_proxied(service: Service) -> bool:
+def is_proxied(service: Service, routing: RoutingTable | None = None) -> bool:
     """True when the service is routed to the outside by a reverse proxy."""
+    if routing is not None and routing.routes_to_internet(service.name):
+        return True
     labels = service.labels
     if labels.get(TRAEFIK_ENABLE_LABEL, "").strip().lower() == "true":
         return True
@@ -40,16 +44,18 @@ def has_published_ports(service: Service) -> bool:
     return bool(service.ports)
 
 
-def bypasses_proxy(service: Service) -> bool:
+def bypasses_proxy(service: Service, routing: RoutingTable | None = None) -> bool:
     """Routed through the reverse proxy *and* directly reachable via a host port."""
-    return is_proxied(service) and any(not p.loopback_only for p in service.ports)
+    return is_proxied(service, routing) and any(not p.loopback_only for p in service.ports)
 
 
-def classify_service(service: Service, stack: Stack) -> Exposure:
+def classify_service(
+    service: Service, stack: Stack, routing: RoutingTable | None = None
+) -> Exposure:
     if service.network_mode == "host":
         # Host networking: every port the app listens on is bound on every
         # host interface - reachable from the local network at least.
-        return Exposure.INTERNET if is_proxied(service) else Exposure.LAN
+        return Exposure.INTERNET if is_proxied(service, routing) else Exposure.LAN
 
     exposure = Exposure.INTERNAL
 
@@ -59,15 +65,22 @@ def classify_service(service: Service, stack: Stack) -> Exposure:
         else:
             exposure = Exposure.HOST
 
-    if is_proxied(service):
+    if is_proxied(service, routing):
         exposure = max(exposure, Exposure.INTERNET)
+    elif routing is not None and routing.routes_to_host(service.name):
+        # Routed only through a loopback-bound entrypoint: reachable from the
+        # host, not from the network.
+        exposure = max(exposure, Exposure.HOST)
 
     return exposure
 
 
-def classify(stack: Stack) -> dict[str, Exposure]:
+def classify(stack: Stack, routing: RoutingTable | None = None) -> dict[str, Exposure]:
     """Classify every service of the stack. Keyed by service name."""
-    return {name: classify_service(service, stack) for name, service in stack.services.items()}
+    return {
+        name: classify_service(service, stack, routing)
+        for name, service in stack.services.items()
+    }
 
 
 def _only_internal_networks(service: Service, stack: Stack) -> bool:

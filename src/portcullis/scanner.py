@@ -15,9 +15,10 @@ from pathlib import Path
 
 from portcullis import exposure as exposure_engine
 from portcullis import scoring, trivy
-from portcullis.discovery import find_compose_groups
+from portcullis.discovery import find_compose_groups, find_traefik_configs
 from portcullis.kb import KnowledgeBase
-from portcullis.model import ScanResult
+from portcullis.model import RoutingTable, ScanResult, Stack
+from portcullis.parsers import traefik
 from portcullis.parsers.compose import parse_compose_groups
 from portcullis.rules import RuleContext, run_all
 
@@ -32,9 +33,10 @@ def scan(path: Path, *, use_trivy: bool | None = None) -> ScanResult:
     groups = find_compose_groups(path)
     stack = parse_compose_groups(groups, root)
 
-    exposures = exposure_engine.classify(stack)
+    routing = _build_routing(path, stack)
+    exposures = exposure_engine.classify(stack, routing)
     kb = KnowledgeBase.load_default()
-    context = RuleContext(stack=stack, exposures=exposures, kb=kb)
+    context = RuleContext(stack=stack, exposures=exposures, kb=kb, routing=routing)
     findings = run_all(context)
 
     if use_trivy is None:
@@ -51,3 +53,19 @@ def scan(path: Path, *, use_trivy: bool | None = None) -> ScanResult:
         score=total,
         grade=scoring.grade(total),
     )
+
+
+def _build_routing(path: Path, stack: Stack) -> RoutingTable:
+    """Discover and parse reverse-proxy file configuration into a routing table.
+
+    Defensive by design: reverse-proxy configuration is untrusted input, so a
+    parsing problem degrades the exposure analysis rather than failing the
+    scan.
+    """
+    routing = RoutingTable()
+    try:
+        traefik_files = find_traefik_configs(path)
+        routing.merge(traefik.analyze(stack, traefik_files))
+    except OSError:
+        pass
+    return routing
