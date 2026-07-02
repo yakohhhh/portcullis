@@ -89,6 +89,9 @@ Then point it at a compose file or a directory tree (e.g. your homelab Git repos
 portcullis scan .
 ```
 
+Requires Python 3.10+. Runs on Linux (the primary target), macOS and Windows - the test suite runs
+on all three in CI.
+
 | Option | Default | Description |
 | --- | --- | --- |
 | `PATH` | `.` | A compose file, or a directory walked recursively. |
