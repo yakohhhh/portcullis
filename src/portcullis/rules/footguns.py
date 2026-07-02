@@ -428,3 +428,45 @@ def service_bypasses_proxy(ctx: RuleContext) -> Iterable[Finding]:
                 "(`127.0.0.1:PORT:PORT`) only if you need local debugging."
             ),
         )
+
+
+_EXTERNAL_VALUE = re.compile(r"^\$[A-Za-z_]\w*$")
+
+
+@rule
+def secret_in_env_despite_secrets_section(ctx: RuleContext) -> Iterable[Finding]:
+    """PC-012 - A concrete secret is passed via environment while the stack uses Docker secrets."""
+    if not ctx.stack.secret_names:
+        return  # the stack does not declare Docker secrets: nothing to nudge toward
+    for name, service in ctx.stack.services.items():
+        for key, value in service.environment.items():
+            if not SECRET_KEY_PATTERN.search(key):
+                continue
+            stripped = value.strip()
+            if not stripped or "${" in stripped or _EXTERNAL_VALUE.match(stripped):
+                continue  # empty or externally provided at deploy time
+            if stripped.lower() in WEAK_SECRET_VALUES:
+                continue  # a weak value is already reported by PC-008
+            yield Finding(
+                rule_id="PC-012",
+                title=f"'{name}' passes a secret via environment despite a `secrets:` section",
+                severity=Severity.LOW,
+                service=name,
+                exposure=ctx.exposure_of(name),
+                description=(
+                    f"The service '{name}' sets the secret-looking variable `{key}` inline in "
+                    "`environment:`, while this stack already declares Docker `secrets:`."
+                ),
+                risk=(
+                    "Environment variables are readable by anyone who can inspect the container "
+                    "(`docker inspect`, `/proc`, crash dumps, logs) and are easy to leak into a "
+                    "committed compose file. Docker secrets are mounted as files with tighter "
+                    "access and are not exposed in the process environment."
+                ),
+                remediation=(
+                    "Move the value into the existing `secrets:` mechanism and reference it from "
+                    "the service (the app reads it from `/run/secrets/<name>`), instead of "
+                    "passing it through `environment:`."
+                ),
+            )
+            break  # one nudge per service is enough

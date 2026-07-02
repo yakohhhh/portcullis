@@ -7,7 +7,13 @@ hand-written files) - unparseable files are skipped with a warning unless the
 user pointed at a single file. The parser intentionally supports the subset
 of the compose specification that matters for a security audit: services,
 images, published ports, networks, volumes, environment, labels,
-capabilities and a few security-relevant flags.
+capabilities, profiles, secrets and a few security-relevant flags.
+
+It also resolves the constructs that change what a service actually is, so
+exposure is not under-reported: ``include:`` (with cycle protection),
+``extends:`` (same file and cross file, with cycle protection), and
+project-level ``.env`` interpolation of ``$VAR`` / ``${VAR}`` /
+``${VAR:-default}`` in image references and ports.
 
 Override files are merged with simplified compose semantics: mappings are
 deep-merged, lists are concatenated (duplicates removed, order preserved) and
@@ -16,6 +22,7 @@ scalars from the override win.
 
 from __future__ import annotations
 
+import contextlib
 import re
 from pathlib import Path
 from typing import Any
@@ -82,7 +89,7 @@ def parse_compose_groups(groups: list[ComposeGroup], root: Path) -> Stack:
         try:
             merged: dict[str, Any] = {}
             for file in group.files:
-                merged = _merge(merged, _load_yaml(file))
+                merged = _merge(merged, _load_model(file, set()))
         except ComposeParseError as exc:
             if len(groups) == 1:
                 raise
@@ -92,6 +99,7 @@ def parse_compose_groups(groups: list[ComposeGroup], root: Path) -> Stack:
 
         base_dir = group.base.parent
         prefix = _relative_label(base_dir, root)
+        env_vars = _read_env_file(base_dir / ".env")  # project-level interpolation
 
         services_cfg = merged.get("services")
         if not isinstance(services_cfg, dict):
@@ -104,12 +112,19 @@ def parse_compose_groups(groups: list[ComposeGroup], root: Path) -> Stack:
                 stack.warnings.append(f"{group.base}: 'networks' is not a mapping - ignored")
             networks_cfg = {}
 
+        services_cfg = _resolve_all_extends(services_cfg, group.base, base_dir, stack.warnings)
+
+        for section in ("secrets", "configs"):
+            for secret_name in _section_keys(merged.get(section)):
+                if section == "secrets":
+                    stack.secret_names.add(secret_name)
+
         for net_name, net_cfg in networks_cfg.items():
             network = _parse_network(str(net_name), net_cfg if isinstance(net_cfg, dict) else {})
             stack.networks.setdefault(_scoped(prefix, network.name), network)
 
         for raw_name, cfg in services_cfg.items():
-            service = _parse_service(str(raw_name), cfg or {}, group.base, base_dir)
+            service = _parse_service(str(raw_name), cfg or {}, group.base, base_dir, env_vars)
             service.networks = [_scoped(prefix, net) for net in service.networks]
             key = service.name
             if key in stack.services:
@@ -117,6 +132,118 @@ def parse_compose_groups(groups: list[ComposeGroup], root: Path) -> Stack:
                 service.name = key
             stack.services[key] = service
     return stack
+
+
+def _section_keys(value: Any) -> list[str]:
+    return [str(key) for key in value] if isinstance(value, dict) else []
+
+
+# ---------------------------------------------------------------------------
+# include: resolution (with cycle protection)
+
+
+def _load_model(file: Path, seen: set[Path]) -> dict[str, Any]:
+    """Load a compose file, resolving its top-level ``include:`` recursively.
+
+    Included models are merged first; the including file's own definitions win
+    on conflict. A cycle (a file that includes itself, directly or not) stops
+    at the repeated file instead of recursing forever.
+    """
+    resolved = _resolve(file)
+    if resolved in seen:
+        return {}
+    seen = seen | {resolved}
+    data = _load_yaml(file)
+    includes = data.get("include")
+    if not includes:
+        return data
+
+    base_dir = file.parent
+    model: dict[str, Any] = {}
+    entries = includes if isinstance(includes, list) else [includes]
+    for entry in entries:
+        for inc_path in _include_paths(entry):
+            # A broken include degrades the analysis, it never crashes it.
+            with contextlib.suppress(ComposeParseError):
+                model = _merge(model, _load_model(base_dir / inc_path, seen))
+    local = {key: value for key, value in data.items() if key != "include"}
+    return _merge(model, local)
+
+
+def _include_paths(entry: Any) -> list[str]:
+    if isinstance(entry, dict):
+        path = entry.get("path")
+        return [str(p) for p in path] if isinstance(path, list) else ([str(path)] if path else [])
+    return [str(entry)] if entry else []
+
+
+# ---------------------------------------------------------------------------
+# extends: resolution (same file and cross file, with cycle protection)
+
+
+def _resolve_all_extends(
+    services_cfg: dict[str, Any], base_file: Path, base_dir: Path, warnings: list[str]
+) -> dict[str, Any]:
+    resolved: dict[str, Any] = {}
+    for name, cfg in services_cfg.items():
+        resolved[name] = _resolve_service_extends(
+            cfg if isinstance(cfg, dict) else {}, services_cfg, base_file, base_dir, set(), warnings
+        )
+    return resolved
+
+
+def _resolve_service_extends(
+    cfg: dict[str, Any],
+    local_services: dict[str, Any],
+    current_file: Path,
+    base_dir: Path,
+    seen: set[tuple[Path, str]],
+    warnings: list[str],
+) -> dict[str, Any]:
+    extends = cfg.get("extends")
+    if not extends:
+        return cfg
+    own = {key: value for key, value in cfg.items() if key != "extends"}
+    target_name, target_file = _extends_target(extends, current_file, base_dir)
+    if target_name is None:
+        return own
+
+    ref = (_resolve(target_file), target_name)
+    if ref in seen:
+        warnings.append(f"{current_file}: circular extends on '{target_name}'")
+        return own
+    seen = seen | {ref}
+
+    if _resolve(target_file) == _resolve(current_file):
+        base_services = local_services
+        base_file = current_file
+    else:
+        try:
+            base_services = _load_yaml(target_file).get("services") or {}
+        except ComposeParseError:
+            warnings.append(f"{current_file}: cannot extend from {target_file}")
+            return own
+        base_file = target_file
+
+    base_cfg = base_services.get(target_name)
+    if not isinstance(base_cfg, dict):
+        warnings.append(f"{current_file}: extends target '{target_name}' not found")
+        return own
+    resolved_base = _resolve_service_extends(
+        base_cfg, base_services, base_file, base_file.parent, seen, warnings
+    )
+    return _merge(resolved_base, own)
+
+
+def _extends_target(extends: Any, current_file: Path, base_dir: Path) -> tuple[str | None, Path]:
+    if isinstance(extends, str):
+        return extends, current_file
+    if isinstance(extends, dict):
+        service = extends.get("service")
+        file_ref = extends.get("file")
+        target_file = (base_dir / str(file_ref)) if file_ref else current_file
+        return (str(service) if service else None), target_file
+    return None, current_file
 
 
 def _scoped(prefix: str, name: str) -> str:
@@ -159,24 +286,36 @@ def _relative_label(directory: Path, root: Path) -> str:
     return str(rel).replace("\\", "/") if str(rel) != "." else ""
 
 
+def _resolve(path: Path) -> Path:
+    try:
+        return path.resolve()
+    except OSError:  # pragma: no cover - resolve rarely raises for plain paths
+        return path
+
+
 # ---------------------------------------------------------------------------
 # Service parsing
 
 
-def _parse_service(name: str, cfg: dict[str, Any], file: Path, base_dir: Path) -> Service:
+def _parse_service(
+    name: str, cfg: dict[str, Any], file: Path, base_dir: Path,
+    env_vars: dict[str, str] | None = None,
+) -> Service:
     if not isinstance(cfg, dict):
         cfg = {}
+    env_vars = env_vars or {}
     image_raw = cfg.get("image")
+    image = _interpolate(str(image_raw), env_vars) if image_raw else None
     return Service(
         name=name,
-        image=ImageRef.parse(str(image_raw)) if image_raw else None,
+        image=ImageRef.parse(image) if image else None,
         build="build" in cfg,
         command=_parse_command(cfg.get("command")),
-        ports=_parse_ports(cfg.get("ports")),
+        ports=_parse_ports(cfg.get("ports"), env_vars),
         networks=_parse_service_networks(cfg.get("networks")),
         network_mode=_as_str(cfg.get("network_mode")),
         volumes=_parse_volumes(cfg.get("volumes")),
-        environment=_parse_environment(cfg, base_dir),
+        environment=_parse_environment(cfg, base_dir, env_vars),
         env_files=_env_file_paths(cfg.get("env_file"), base_dir),
         labels=_parse_string_mapping(cfg.get("labels")),
         privileged=bool(cfg.get("privileged", False)),
@@ -188,8 +327,25 @@ def _parse_service(name: str, cfg: dict[str, Any], file: Path, base_dir: Path) -
         read_only=bool(cfg.get("read_only", False)),
         security_opt=_parse_string_list(cfg.get("security_opt")),
         depends_on=_parse_depends_on(cfg.get("depends_on")),
+        profiles=_parse_string_list(cfg.get("profiles")),
+        secrets=_parse_service_secrets(cfg.get("secrets")),
         source_file=file,
     )
+
+
+def _parse_service_secrets(value: Any) -> list[str]:
+    """Service ``secrets:`` entries (short string form or long ``{source: ...}``)."""
+    if not isinstance(value, list):
+        return []
+    names: list[str] = []
+    for entry in value:
+        if isinstance(entry, dict):
+            source = entry.get("source")
+            if source:
+                names.append(str(source))
+        elif entry is not None:
+            names.append(str(entry))
+    return names
 
 
 def _as_str(value: Any) -> str | None:
@@ -263,32 +419,32 @@ def _parse_network(name: str, cfg: dict[str, Any]) -> Network:
 _PORT_RANGE = re.compile(r"^(\d+)(?:-(\d+))?$")
 
 
-def _parse_ports(value: Any) -> list[PortMapping]:
+def _parse_ports(value: Any, env_vars: dict[str, str] | None = None) -> list[PortMapping]:
     mappings: list[PortMapping] = []
     if not isinstance(value, list):
         return mappings
     for entry in value:
-        mappings.extend(_parse_port_entry(entry))
+        mappings.extend(_parse_port_entry(entry, env_vars or {}))
     return mappings
 
 
-def _parse_port_entry(entry: Any) -> list[PortMapping]:
+def _parse_port_entry(entry: Any, env_vars: dict[str, str]) -> list[PortMapping]:
     if entry is None:
         return []
     if isinstance(entry, dict):  # long syntax
-        target = _as_int(entry.get("target"))
+        target = _as_int(_interpolate(str(entry.get("target")), env_vars))
         if target is None:
             return []
         return [
             PortMapping(
                 container_port=target,
-                host_port=_as_int(entry.get("published")),
+                host_port=_as_int(_interpolate(str(entry.get("published", "")), env_vars)),
                 host_ip=str(entry.get("host_ip", "")),
                 protocol=str(entry.get("protocol", "tcp")),
                 raw=str(entry),
             )
         ]
-    return _parse_port_string(str(entry))
+    return _parse_port_string(_interpolate(str(entry), env_vars))
 
 
 def _parse_port_string(raw: str) -> list[PortMapping]:
@@ -406,16 +562,21 @@ def _parse_volume_string(raw: str) -> VolumeMount:
 # Environment
 
 _INTERPOLATION = re.compile(
-    r"\$\{(?P<name>[A-Za-z_][A-Za-z0-9_]*)(?:(?P<sep>:?-)(?P<default>[^}]*))?\}"
+    r"\$\$"
+    r"|\$\{(?P<braced>[A-Za-z_][A-Za-z0-9_]*)(?:(?P<sep>:?-)(?P<default>[^}]*))?\}"
+    r"|\$(?P<simple>[A-Za-z_][A-Za-z0-9_]*)"
 )
 
 
-def _parse_environment(cfg: dict[str, Any], base_dir: Path) -> dict[str, str]:
+def _parse_environment(
+    cfg: dict[str, Any], base_dir: Path, env_vars: dict[str, str] | None = None
+) -> dict[str, str]:
+    env_vars = env_vars or {}
     env: dict[str, str] = {}
     for path in _env_file_paths(cfg.get("env_file"), base_dir):
         env.update(_read_env_file(path))
     env.update(_parse_environment_section(cfg.get("environment")))
-    return {key: _resolve_defaults(value) for key, value in env.items()}
+    return {key: _interpolate(value, env_vars) for key, value in env.items()}
 
 
 def _env_file_paths(value: Any, base_dir: Path) -> list[Path]:
@@ -467,16 +628,26 @@ def _read_env_file(path: Path) -> dict[str, str]:
     return env
 
 
-def _resolve_defaults(value: str) -> str:
-    """Resolve ``${VAR:-default}`` interpolations to their default value.
+def _interpolate(value: str, env_vars: dict[str, str]) -> str:
+    """Resolve ``$VAR`` / ``${VAR}`` / ``${VAR:-default}`` interpolations.
 
-    Variables without a default are kept verbatim (``${VAR}``) so that rules
-    can recognise them as externally provided and avoid false positives.
+    A variable is substituted from ``env_vars`` (the project ``.env``) when
+    present; otherwise ``${VAR:-default}`` falls back to its default, and a
+    bare ``$VAR`` / ``${VAR}`` with no known value is kept verbatim so rules
+    treat it as externally provided (and do not raise false positives).
+    ``$$`` is an escaped literal dollar.
     """
 
     def _sub(match: re.Match[str]) -> str:
+        if match.group(0) == "$$":
+            return "$"
+        name = match.group("braced") or match.group("simple")
+        if name is not None and name in env_vars:
+            return env_vars[name]
+        if match.group("simple") is not None:
+            return match.group(0)  # unknown $VAR: keep literal
         if match.group("default") is not None:
-            return match.group("default")
-        return match.group(0)
+            return match.group("default")  # ${VAR:-default}: use the default
+        return match.group(0)  # unknown ${VAR}: keep literal
 
     return _INTERPOLATION.sub(_sub, value)

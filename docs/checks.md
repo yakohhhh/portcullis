@@ -1,6 +1,6 @@
 # Checks reference
 
-Portcullis ships 11 compose-level foot-gun rules, implemented in
+Portcullis ships 12 compose-level foot-gun rules, implemented in
 `src/portcullis/rules/footguns.py`. Every finding carries three pieces of prose - what was found,
 why it is a risk, and how to fix it - so this page is a condensed reference, not a replacement for
 the report itself.
@@ -143,3 +143,16 @@ limiting, and any authentication middleware. Anyone on the network can talk to t
 
 **Fix:** remove the `ports:` entry and let the proxy reach the service over the shared Docker
 network. Keep a loopback binding (`127.0.0.1:PORT:PORT`) only if you need local debugging.
+
+## PC-012 - Secret in environment despite a `secrets:` section (LOW)
+
+**Detects:** a service that passes a concrete secret through `environment:` while the stack already
+declares top-level Docker `secrets:`. Weak or default values are left to PC-008; externally
+provided values (`${VAR}`) are ignored.
+
+**Why it matters:** environment variables are readable by anyone who can inspect the container
+(`docker inspect`, `/proc`, crash dumps, logs) and easily leak into a committed compose file.
+Docker secrets are mounted as files with tighter access and stay out of the process environment.
+
+**Fix:** move the value into the existing `secrets:` mechanism and read it from
+`/run/secrets/<name>` in the service, instead of passing it through `environment:`.

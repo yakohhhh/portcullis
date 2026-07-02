@@ -135,6 +135,10 @@ class Service:
     read_only: bool = False
     security_opt: list[str] = field(default_factory=list)
     depends_on: list[str] = field(default_factory=list)
+    #: Compose profiles the service belongs to (empty = always enabled).
+    profiles: list[str] = field(default_factory=list)
+    #: Names of Docker secrets granted to the service (``secrets:`` section).
+    secrets: list[str] = field(default_factory=list)
     source_file: Path | None = None
 
 
@@ -156,6 +160,8 @@ class Stack:
     services: dict[str, Service] = field(default_factory=dict)
     networks: dict[str, Network] = field(default_factory=dict)
     files: list[Path] = field(default_factory=list)
+    #: Names declared in top-level ``secrets:`` sections (Docker secrets).
+    secret_names: set[str] = field(default_factory=set)
     #: Non-fatal parsing problems (skipped files, ignored sections).
     warnings: list[str] = field(default_factory=list)
 
