@@ -123,6 +123,8 @@ class Service:
     network_mode: str | None = None
     volumes: list[VolumeMount] = field(default_factory=list)
     environment: dict[str, str] = field(default_factory=dict)
+    #: Resolved paths of the ``env_file:`` entries feeding ``environment``.
+    env_files: list[Path] = field(default_factory=list)
     labels: dict[str, str] = field(default_factory=dict)
     privileged: bool = False
     cap_add: list[str] = field(default_factory=list)

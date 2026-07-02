@@ -177,6 +177,7 @@ def _parse_service(name: str, cfg: dict[str, Any], file: Path, base_dir: Path) -
         network_mode=_as_str(cfg.get("network_mode")),
         volumes=_parse_volumes(cfg.get("volumes")),
         environment=_parse_environment(cfg, base_dir),
+        env_files=_env_file_paths(cfg.get("env_file"), base_dir),
         labels=_parse_string_mapping(cfg.get("labels")),
         privileged=bool(cfg.get("privileged", False)),
         cap_add=_parse_string_list(cfg.get("cap_add")),
@@ -411,10 +412,21 @@ _INTERPOLATION = re.compile(
 
 def _parse_environment(cfg: dict[str, Any], base_dir: Path) -> dict[str, str]:
     env: dict[str, str] = {}
-    for env_file in _parse_string_list(cfg.get("env_file")):
-        env.update(_read_env_file(base_dir / env_file))
+    for path in _env_file_paths(cfg.get("env_file"), base_dir):
+        env.update(_read_env_file(path))
     env.update(_parse_environment_section(cfg.get("environment")))
     return {key: _resolve_defaults(value) for key, value in env.items()}
+
+
+def _env_file_paths(value: Any, base_dir: Path) -> list[Path]:
+    """Resolve ``env_file:`` entries (string, list, or list of ``{path: ...}``)."""
+    entries = value if isinstance(value, list) else ([value] if value is not None else [])
+    paths: list[Path] = []
+    for entry in entries:
+        raw = entry.get("path") if isinstance(entry, dict) else entry
+        if raw:
+            paths.append(base_dir / str(raw))
+    return paths
 
 
 def _parse_environment_section(value: Any) -> dict[str, str]:
