@@ -1,4 +1,4 @@
-"""Portcullis — security auditor for self-hosted infrastructures.
+"""Portcullis - security auditor for self-hosted infrastructures.
 
 Portcullis reads the configuration files of a self-hosted stack
 (docker-compose files, reverse proxy configuration) and reports what is

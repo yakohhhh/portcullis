@@ -17,7 +17,7 @@ def render_markdown(result: ScanResult, *, min_severity: Severity = Severity.INF
     lines: list[str] = []
     lines.append("# Portcullis security report")
     lines.append("")
-    lines.append(f"**Grade: {result.grade}** — score {result.score}/100 · "
+    lines.append(f"**Grade: {result.grade}** - score {result.score}/100 · "
                  f"{len(result.stack.services)} services · {len(result.findings)} findings")
     lines.append("")
     lines.append(f"Scanned path: `{result.stack.root}`")

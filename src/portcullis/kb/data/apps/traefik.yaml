@@ -1,4 +1,4 @@
-# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
 id: traefik
 name: Traefik
 category: proxy
@@ -13,7 +13,7 @@ risk_note: >
   Traefik is the edge proxy that terminates TLS for everything behind it, so
   ports 80/443 are meant to face the Internet. The danger is its dashboard
   and API on port 8080: in the common `--api.insecure` setup they have no
-  authentication and reveal every internal service, route and middleware —
+  authentication and reveal every internal service, route and middleware -
   a ready-made map of your infrastructure for an attacker. Traefik also
   usually mounts the Docker socket, so treat the container itself as
   root-equivalent on the host.

@@ -2,7 +2,7 @@
 
 Every rule gets at least one positive and one negative case, built from
 in-memory :class:`Stack`/:class:`Service` objects and an in-memory
-:class:`KnowledgeBase` — no YAML files, no compose parsing involved.
+:class:`KnowledgeBase` - no YAML files, no compose parsing involved.
 """
 
 from __future__ import annotations
@@ -75,7 +75,7 @@ def make_kb() -> KnowledgeBase:
 
 
 class TestDockerSocketMounted:
-    """PC-001 — Docker socket mounted into a container."""
+    """PC-001 - Docker socket mounted into a container."""
 
     def test_socket_mount_is_critical(self) -> None:
         service = Service(name="portainer", volumes=[socket_mount()])
@@ -99,7 +99,7 @@ class TestDockerSocketMounted:
 
 
 class TestPrivilegedContainer:
-    """PC-002 — privileged mode."""
+    """PC-002 - privileged mode."""
 
     def test_privileged_is_critical(self) -> None:
         service = Service(name="agent", privileged=True)
@@ -115,7 +115,7 @@ class TestPrivilegedContainer:
 
 
 class TestHostNetworkMode:
-    """PC-003 — host networking."""
+    """PC-003 - host networking."""
 
     def test_network_mode_host_is_high(self) -> None:
         service = Service(name="homeassistant", network_mode="host")
@@ -132,7 +132,7 @@ class TestHostNetworkMode:
 
 
 class TestDangerousCapabilities:
-    """PC-004 — dangerous Linux capabilities, including CAP_ prefix normalization."""
+    """PC-004 - dangerous Linux capabilities, including CAP_ prefix normalization."""
 
     @pytest.mark.parametrize(
         ("cap", "severity"),
@@ -162,7 +162,7 @@ class TestDangerousCapabilities:
 
 
 class TestMutableImageTag:
-    """PC-005 — no tag or ``latest``."""
+    """PC-005 - no tag or ``latest``."""
 
     @pytest.mark.parametrize("raw", ["nginx:latest", "nginx"])
     def test_latest_or_missing_tag_is_low(self, raw: str) -> None:
@@ -191,7 +191,7 @@ class TestMutableImageTag:
 
 
 class TestExplicitRootUser:
-    """PC-006 — explicit root user."""
+    """PC-006 - explicit root user."""
 
     @pytest.mark.parametrize("user", ["0", "root", "root:root"])
     def test_root_user_is_low(self, user: str) -> None:
@@ -209,7 +209,7 @@ class TestExplicitRootUser:
 
 
 class TestHostPidNamespace:
-    """PC-007 — host PID namespace."""
+    """PC-007 - host PID namespace."""
 
     def test_pid_host_is_high(self) -> None:
         service = Service(name="monitor", pid="host")
@@ -225,7 +225,7 @@ class TestHostPidNamespace:
 
 
 class TestWeakOrDefaultSecrets:
-    """PC-008 — weak, default or empty secrets, escalated by exposure."""
+    """PC-008 - weak, default or empty secrets, escalated by exposure."""
 
     def test_default_value_without_exposure_is_high(self) -> None:
         service = Service(name="db", environment={"MYSQL_PASSWORD": "changeme"})
@@ -270,7 +270,7 @@ class TestWeakOrDefaultSecrets:
 
 
 class TestSensitiveServiceExposed:
-    """PC-009 — sensitive application more exposed than the KB recommends."""
+    """PC-009 - sensitive application more exposed than the KB recommends."""
 
     def test_proxy_only_app_on_lan_is_critical(self) -> None:
         service = Service(name="vault", image=ImageRef.parse("vaultwarden/server:1.32"))
@@ -283,7 +283,7 @@ class TestSensitiveServiceExposed:
 
     def test_proxy_only_app_behind_proxy_is_clean(self) -> None:
         # INTERNET means "through the reverse proxy", which is exactly what
-        # the proxy-only recommendation describes — not a violation.
+        # the proxy-only recommendation describes - not a violation.
         service = Service(name="vault", image=ImageRef.parse("vaultwarden/server:1.32"))
         ctx = make_ctx(service, exposures={"vault": Exposure.INTERNET}, kb=make_kb())
         assert list(footguns.sensitive_service_exposed(ctx)) == []
@@ -315,7 +315,7 @@ class TestSensitiveServiceExposed:
 
 
 class TestDatabasePublished:
-    """PC-010 — database port published on the host."""
+    """PC-010 - database port published on the host."""
 
     def test_published_database_port_is_high(self) -> None:
         service = Service(
@@ -359,7 +359,7 @@ class TestDatabasePublished:
 
 
 class TestServiceBypassesProxy:
-    """PC-011 — proxied service also publishing non-loopback ports."""
+    """PC-011 - proxied service also publishing non-loopback ports."""
 
     def test_proxied_with_published_port_is_medium(self) -> None:
         service = Service(

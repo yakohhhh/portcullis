@@ -1,4 +1,4 @@
-# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
 id: influxdb
 name: InfluxDB
 category: database
@@ -12,7 +12,7 @@ default_credentials: false
 exposure: never
 risk_note: >
   InfluxDB stores metrics and sensor history that map out your whole
-  infrastructure — what runs where, when you are home, when backups happen.
+  infrastructure - what runs where, when you are home, when backups happen.
   InfluxDB 1.x shipped with authentication disabled, and an auth bypass
   (CVE-2019-20933) let attackers loot even "protected" instances; an exposed
   server means anyone can query, tamper with or drop every database.

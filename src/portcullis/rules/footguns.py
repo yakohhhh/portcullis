@@ -2,7 +2,7 @@
 
 Every rule follows the same philosophy (see the project's non-functional
 requirements): precision over noise, and every finding must explain what was
-found, why it is a risk, and how to fix it — in words a non-expert can act on.
+found, why it is a risk, and how to fix it - in words a non-expert can act on.
 """
 
 from __future__ import annotations
@@ -43,7 +43,7 @@ def _cap_normalize(cap: str) -> str:
 
 @rule
 def docker_socket_mounted(ctx: RuleContext) -> Iterable[Finding]:
-    """PC-001 — The Docker socket is mounted into a container."""
+    """PC-001 - The Docker socket is mounted into a container."""
     for name, service in ctx.stack.services.items():
         for mount in service.volumes:
             mounted = {mount.source.rstrip("/"), mount.target.rstrip("/")}
@@ -73,7 +73,7 @@ def docker_socket_mounted(ctx: RuleContext) -> Iterable[Finding]:
                 risk=(
                     "Any code execution inside this container (a vulnerability in the "
                     "app is enough) can start a privileged container and take over the "
-                    "whole host — data, other services, everything." + ro_note
+                    "whole host - data, other services, everything." + ro_note
                 ),
                 remediation=(
                     "Remove the mount if the app does not truly need it. If it does "
@@ -90,7 +90,7 @@ def docker_socket_mounted(ctx: RuleContext) -> Iterable[Finding]:
 
 @rule
 def privileged_container(ctx: RuleContext) -> Iterable[Finding]:
-    """PC-002 — A container runs in privileged mode."""
+    """PC-002 - A container runs in privileged mode."""
     for name, service in ctx.stack.services.items():
         if not service.privileged:
             continue
@@ -112,14 +112,14 @@ def privileged_container(ctx: RuleContext) -> Iterable[Finding]:
             remediation=(
                 "Remove `privileged: true`. If the app needs specific privileges, "
                 "grant them individually: `devices:` for hardware access, `cap_add:` "
-                "for a single capability — never the whole set."
+                "for a single capability - never the whole set."
             ),
         )
 
 
 @rule
 def host_network_mode(ctx: RuleContext) -> Iterable[Finding]:
-    """PC-003 — A container uses the host network."""
+    """PC-003 - A container uses the host network."""
     for name, service in ctx.stack.services.items():
         if service.network_mode != "host":
             continue
@@ -142,7 +142,7 @@ def host_network_mode(ctx: RuleContext) -> Iterable[Finding]:
             remediation=(
                 "Use the default bridge networking and publish only the ports you "
                 "need. A few apps genuinely require host networking (e.g. Home "
-                "Assistant for device discovery) — for those, firewall the host "
+                "Assistant for device discovery) - for those, firewall the host "
                 "ports and document the exception."
             ),
         )
@@ -150,7 +150,7 @@ def host_network_mode(ctx: RuleContext) -> Iterable[Finding]:
 
 @rule
 def dangerous_capabilities(ctx: RuleContext) -> Iterable[Finding]:
-    """PC-004 — A container is granted a dangerous Linux capability."""
+    """PC-004 - A container is granted a dangerous Linux capability."""
     for name, service in ctx.stack.services.items():
         for cap in service.cap_add:
             normalized = _cap_normalize(cap)
@@ -191,7 +191,7 @@ def dangerous_capabilities(ctx: RuleContext) -> Iterable[Finding]:
 
 @rule
 def mutable_image_tag(ctx: RuleContext) -> Iterable[Finding]:
-    """PC-005 — An image has no tag or uses ``latest``."""
+    """PC-005 - An image has no tag or uses ``latest``."""
     for name, service in ctx.stack.services.items():
         image = service.image
         if image is None or image.digest:
@@ -224,7 +224,7 @@ def mutable_image_tag(ctx: RuleContext) -> Iterable[Finding]:
 
 @rule
 def explicit_root_user(ctx: RuleContext) -> Iterable[Finding]:
-    """PC-006 — A container explicitly runs as root."""
+    """PC-006 - A container explicitly runs as root."""
     for name, service in ctx.stack.services.items():
         user = (service.user or "").strip()
         if user.split(":")[0] not in ("root", "0"):
@@ -250,7 +250,7 @@ def explicit_root_user(ctx: RuleContext) -> Iterable[Finding]:
 
 @rule
 def host_pid_namespace(ctx: RuleContext) -> Iterable[Finding]:
-    """PC-007 — A container shares the host PID namespace."""
+    """PC-007 - A container shares the host PID namespace."""
     for name, service in ctx.stack.services.items():
         if service.pid != "host":
             continue
@@ -263,25 +263,25 @@ def host_pid_namespace(ctx: RuleContext) -> Iterable[Finding]:
             description=f"The service '{name}' sets `pid: host`.",
             risk=(
                 "The container sees and can signal every process on the host, and "
-                "combined with SYS_PTRACE can read their memory — including secrets "
+                "combined with SYS_PTRACE can read their memory - including secrets "
                 "held by other services."
             ),
             remediation=(
                 "Remove `pid: host`. Monitoring agents that need it should be "
-                "trusted, minimal images — never Internet-facing applications."
+                "trusted, minimal images - never Internet-facing applications."
             ),
         )
 
 
 @rule
 def weak_or_default_secrets(ctx: RuleContext) -> Iterable[Finding]:
-    """PC-008 — An environment variable holds a weak or default secret."""
+    """PC-008 - An environment variable holds a weak or default secret."""
     for name, service in ctx.stack.services.items():
         for key, value in service.environment.items():
             if not SECRET_KEY_PATTERN.search(key):
                 continue
             stripped = value.strip()
-            if "${" in stripped:  # provided externally at deploy time — unknown here
+            if "${" in stripped:  # provided externally at deploy time - unknown here
                 continue
             is_empty = stripped == ""
             if not is_empty and stripped.lower() not in WEAK_SECRET_VALUES:
@@ -313,7 +313,7 @@ def weak_or_default_secrets(ctx: RuleContext) -> Iterable[Finding]:
 
 @rule
 def sensitive_service_exposed(ctx: RuleContext) -> Iterable[Finding]:
-    """PC-009 — A sensitive application is more exposed than recommended."""
+    """PC-009 - A sensitive application is more exposed than recommended."""
     if ctx.kb is None:
         return
     for name, service in ctx.stack.services.items():
@@ -360,7 +360,7 @@ def sensitive_service_exposed(ctx: RuleContext) -> Iterable[Finding]:
 
 @rule
 def database_published(ctx: RuleContext) -> Iterable[Finding]:
-    """PC-010 — A database port is published on the host."""
+    """PC-010 - A database port is published on the host."""
     for name, service in ctx.stack.services.items():
         if service.image is None or not service.ports:
             continue
@@ -387,7 +387,7 @@ def database_published(ctx: RuleContext) -> Iterable[Finding]:
                 "scanned, brute-forced, and hit by authentication-bypass CVEs."
             ),
             remediation=(
-                "Remove the `ports:` entry — containers on the same compose network "
+                "Remove the `ports:` entry - containers on the same compose network "
                 "reach the database by service name without any published port. For "
                 "occasional admin access, bind to loopback (`127.0.0.1:5432:5432`) "
                 "and connect through an SSH tunnel or VPN."
@@ -397,7 +397,7 @@ def database_published(ctx: RuleContext) -> Iterable[Finding]:
 
 @rule
 def service_bypasses_proxy(ctx: RuleContext) -> Iterable[Finding]:
-    """PC-011 — A proxied service also publishes ports directly."""
+    """PC-011 - A proxied service also publishes ports directly."""
     from portcullis.exposure import bypasses_proxy  # local import to avoid a cycle
 
     for name, service in ctx.stack.services.items():

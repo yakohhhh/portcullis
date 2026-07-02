@@ -1,4 +1,4 @@
-# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
 id: nginx-proxy-manager
 name: Nginx Proxy Manager
 category: proxy
@@ -10,7 +10,7 @@ default_ports: [80, 81, 443]
 default_credentials: true
 exposure: public-ok
 risk_note: >
-  Nginx Proxy Manager is your front door — it terminates TLS and routes
+  Nginx Proxy Manager is your front door - it terminates TLS and routes
   traffic to every application behind it. Its admin panel on port 81 ships
   with the well-known login admin@example.com / changeme; an attacker who
   reaches it before you change that can reroute your domains, steal

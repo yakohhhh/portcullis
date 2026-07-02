@@ -7,7 +7,7 @@ body:
     id: problem
     attributes:
       label: What problem would this solve?
-      description: Describe the gap — a misconfiguration Portcullis misses, a workflow it does not fit, etc.
+      description: Describe the gap - a misconfiguration Portcullis misses, a workflow it does not fit, etc.
       placeholder: "Portcullis does not detect containers running with the docker socket mounted read-write when..."
     validations:
       required: true

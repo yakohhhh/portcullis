@@ -1,4 +1,4 @@
-# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
 id: photoprism
 name: PhotoPrism
 category: media
@@ -12,8 +12,8 @@ exposure: proxy-only
 risk_note: >
   PhotoPrism indexes your personal photo library, including location metadata
   that shows where you live and travel. An attacker who reaches the web
-  interface — or guesses a weak admin password like the "insecure"
-  placeholder from the sample compose file — can browse and download every
+  interface - or guesses a weak admin password like the "insecure"
+  placeholder from the sample compose file - can browse and download every
   picture. Set a strong admin password and expose it only behind a reverse
   proxy with HTTPS.
 references:

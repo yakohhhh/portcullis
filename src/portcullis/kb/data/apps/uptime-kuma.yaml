@@ -1,4 +1,4 @@
-# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
 id: uptime-kuma
 name: Uptime Kuma
 category: monitoring

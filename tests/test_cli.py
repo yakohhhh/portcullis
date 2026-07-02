@@ -78,7 +78,7 @@ class TestScanExitCodes:
     def test_fail_on_info_exits_zero_when_there_are_no_findings(
         self, runner: CliRunner, tmp_path: Path
     ) -> None:
-        # The gate fires on findings at or above the level — zero findings
+        # The gate fires on findings at or above the level - zero findings
         # must always pass, even at the lowest gate.
         stack = write_stack(tmp_path / "stack", CLEAN_COMPOSE)
         result = runner.invoke(

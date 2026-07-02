@@ -1,4 +1,4 @@
-# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
 id: mariadb
 name: MariaDB
 category: database
@@ -15,7 +15,7 @@ risk_note: >
   MariaDB is the primary datastore for many self-hosted apps (Nextcloud,
   WordPress, Home Assistant), so it holds their accounts and private data.
   An attacker who reaches port 3306 can brute-force root, dump every
-  database, and — like MySQL — turn FILE privileges into code execution by
+  database, and - like MySQL - turn FILE privileges into code execution by
   dropping a malicious UDF plugin on the server.
 references:
   - https://hub.docker.com/_/mariadb

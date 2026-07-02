@@ -3,13 +3,13 @@
 Classifies every service of a stack by how reachable it is (Internet, local
 network, host only, internal), by crossing three signals:
 
-* **published ports** — every ``ports:`` entry binds a host port; binding to
+* **published ports** - every ``ports:`` entry binds a host port; binding to
   a loopback address limits it to the host, anything else is reachable from
   the local network (and from the Internet if the router forwards the port);
-* **reverse proxy routing** — a service routed by the reverse proxy
+* **reverse proxy routing** - a service routed by the reverse proxy
   (Traefik or caddy-docker-proxy labels in v0.1) is considered reachable
   from the Internet, since the proxy is typically the Internet entry point;
-* **internal networks** — a service attached only to ``internal: true``
+* **internal networks** - a service attached only to ``internal: true``
   networks has no gateway, so even published ports are unreachable.
 
 The engine also flags services that *bypass* the reverse proxy: routed by
@@ -48,7 +48,7 @@ def bypasses_proxy(service: Service) -> bool:
 def classify_service(service: Service, stack: Stack) -> Exposure:
     if service.network_mode == "host":
         # Host networking: every port the app listens on is bound on every
-        # host interface — reachable from the local network at least.
+        # host interface - reachable from the local network at least.
         return Exposure.INTERNET if is_proxied(service) else Exposure.LAN
 
     exposure = Exposure.INTERNAL

@@ -19,7 +19,7 @@ SEVERITY_CHOICES = [s.name.lower() for s in sorted(Severity, reverse=True)]
 @click.group(context_settings={"help_option_names": ["-h", "--help"]})
 @click.version_option(version=__version__, prog_name="portcullis")
 def main() -> None:
-    """Portcullis — security auditor for self-hosted infrastructures.
+    """Portcullis - security auditor for self-hosted infrastructures.
 
     Reads your docker-compose files (and soon your reverse proxy
     configuration), reports what is actually exposed to the Internet, what

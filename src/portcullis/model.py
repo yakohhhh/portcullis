@@ -37,7 +37,7 @@ class Exposure(enum.IntEnum):
     The classification crosses published ports, reverse proxy routing and
     ``internal`` networks (see :mod:`portcullis.exposure`). ``LAN`` means
     "reachable from the local network, and from the Internet if the port is
-    forwarded on the router" — without an active probe Portcullis stays on
+    forwarded on the router" - without an active probe Portcullis stays on
     the safe side and reports it as local-network reachable.
     """
 

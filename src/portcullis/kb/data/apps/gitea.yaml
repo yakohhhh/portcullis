@@ -1,4 +1,4 @@
-# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
 id: gitea
 name: Gitea
 category: development
@@ -12,9 +12,9 @@ default_credentials: false
 exposure: proxy-only
 risk_note: >
   Gitea holds all your source code, including any API keys or passwords ever
-  committed to a repository. An attacker who compromises an account — or who
+  committed to a repository. An attacker who compromises an account - or who
   reaches an instance whose install wizard was never completed and creates
-  the admin themselves — can read every repo, steal CI tokens and push
+  the admin themselves - can read every repo, steal CI tokens and push
   malicious commits into your software.
 references:
   - https://docs.gitea.com/installation/install-with-docker

@@ -1,8 +1,8 @@
-"""Scoring: turn a list of findings into a 0–100 score and an A–F grade.
+"""Scoring: turn a list of findings into a 0-100 score and an A-F grade.
 
 The score starts at 100 and each finding subtracts a weight based on its
 severity. The mapping is deliberately simple and documented so users can
-understand — and challenge — their grade.
+understand - and challenge - their grade.
 """
 
 from __future__ import annotations

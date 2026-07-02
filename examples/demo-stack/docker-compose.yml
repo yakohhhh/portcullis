@@ -1,4 +1,4 @@
-# Portcullis demo stack — a deliberately misconfigured homelab.
+# Portcullis demo stack - a deliberately misconfigured homelab.
 #
 # DO NOT DEPLOY THIS STACK. It exists so that documentation and CI can run
 # `portcullis scan examples/demo-stack --no-trivy` against a realistic compose
@@ -39,7 +39,7 @@ services:
       - traefik.http.services.vaultwarden.loadbalancer.server.port=80
     ports:
       # DELIBERATE (PC-011): already routed through Traefik above, yet also
-      # published directly — this port skips the proxy's TLS and middlewares.
+      # published directly - this port skips the proxy's TLS and middlewares.
       - "8081:80"
     volumes:
       - vaultwarden-data:/data
@@ -73,10 +73,10 @@ services:
 
   # --- Management ------------------------------------------------------------
   portainer:
-    # DELIBERATE (PC-005): no tag pins this image — `latest` is implied.
+    # DELIBERATE (PC-005): no tag pins this image - `latest` is implied.
     image: portainer/portainer-ce
     volumes:
-      # DELIBERATE (PC-001): read-write Docker socket — whoever compromises
+      # DELIBERATE (PC-001): read-write Docker socket - whoever compromises
       # Portainer controls the Docker daemon, and therefore the host.
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer-data:/data
@@ -91,7 +91,7 @@ services:
     cap_add:
       - SYS_ADMIN
     ports:
-      # Bound to loopback: reachable from the host only (exposure HOST) —
+      # Bound to loopback: reachable from the host only (exposure HOST) -
       # the sane way to keep an admin UI around for occasional use.
       - "127.0.0.1:8200:8200"
     volumes:
@@ -112,7 +112,7 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       # DELIBERATE (PC-010, PC-009): a database port published on all
-      # interfaces — containers reach it by service name, nobody else should.
+      # interfaces - containers reach it by service name, nobody else should.
       - "5432:5432"
     networks:
       # DELIBERATE: also attached to the non-internal proxy network, so the
@@ -126,7 +126,7 @@ services:
 
   redis:
     # Clean counter-example: pinned tag, no published port, and attached only
-    # to the internal backend network — Portcullis classifies it as INTERNAL
+    # to the internal backend network - Portcullis classifies it as INTERNAL
     # and raises no finding for it.
     image: redis:7.2.5-alpine
     networks:

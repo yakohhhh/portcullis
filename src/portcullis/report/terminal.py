@@ -42,7 +42,7 @@ def render_terminal(result: ScanResult, *, min_severity: Severity = Severity.INF
     grade_style = GRADE_STYLES.get(result.grade, "white")
     header = Text.assemble(
         ("Portcullis", "bold"),
-        " — security report for ",
+        " - security report for ",
         (str(result.stack.root), "italic"),
         "\nGrade: ",
         (f" {result.grade} ", grade_style),

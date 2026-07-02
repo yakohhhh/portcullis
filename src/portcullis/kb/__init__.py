@@ -71,7 +71,7 @@ class AppInfo:
 
         ``proxy-only`` deserves a note: reaching INTERNET *through the proxy*
         is what the recommendation describes, so it is only violated by
-        direct exposure — which the exposure engine reports as LAN (published
+        direct exposure - which the exposure engine reports as LAN (published
         port). The PC-011 bypass rule covers the proxied-plus-published case.
         """
         recommendation = self.exposure_recommendation

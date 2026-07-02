@@ -1,4 +1,4 @@
-# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
 id: immich
 name: Immich
 category: media
@@ -15,7 +15,7 @@ risk_note: >
   recognition data and GPS coordinates that map where you live, work and
   travel. Anyone who gets in can download the full library and reconstruct
   your daily movements from the metadata alone. Put it behind a reverse
-  proxy with HTTPS and apply updates promptly — it is a fast-moving project.
+  proxy with HTTPS and apply updates promptly - it is a fast-moving project.
 references:
   - https://immich.app/docs/install/docker-compose
   - https://github.com/immich-app/immich

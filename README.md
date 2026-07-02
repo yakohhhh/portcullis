@@ -1,6 +1,6 @@
 # Portcullis
 
-> See what your self-hosted stack really exposes to the Internet — and how to fix it.
+> See what your self-hosted stack really exposes to the Internet - and how to fix it.
 
 [![CI](https://github.com/yakohhhh/portcullis/actions/workflows/ci.yml/badge.svg)](https://github.com/yakohhhh/portcullis/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -9,13 +9,13 @@
 
 Portcullis is a security auditor for self-hosted infrastructures. It statically analyses your
 docker-compose files, figures out what each service actually exposes, runs foot-gun checks, and
-renders a prioritised report with an A–F grade. 100% local: nothing leaves your machine.
+renders a prioritised report with an A-F grade. 100% local: nothing leaves your machine.
 
 ## Why
 
 Homelabs routinely run dozens of compose services behind Traefik or Caddy, with no security team
 reviewing any of it. The failure modes are brutal and quiet: one published database port, one
-mounted Docker socket, one default password on a LAN-reachable service — and an attacker owns the
+mounted Docker socket, one default password on a LAN-reachable service - and an attacker owns the
 host, not just the container.
 
 Existing scanners don't help much here. They look at files one by one, are built for cloud and
@@ -25,18 +25,18 @@ cares about: *what can reach this service, and what happens if it is compromised
 
 ## What it does
 
-- **Exposure engine** — classifies every service as INTERNAL / HOST / LAN / INTERNET by crossing
+- **Exposure engine** - classifies every service as INTERNAL / HOST / LAN / INTERNET by crossing
   three signals: published ports × reverse-proxy routing (Traefik, caddy-docker-proxy and
   nginx-proxy compose labels/env) × `internal: true` networks.
-- **Application knowledge base** — YAML entries map container images to what the app is (category,
+- **Application knowledge base** - YAML entries map container images to what the app is (category,
   sensitivity, recommended exposure), so exposing a password manager is treated differently from
   exposing a blog.
-- **Foot-gun rules** — 11 compose-level checks (PC-001..PC-011) for the misconfigurations that
+- **Foot-gun rules** - 11 compose-level checks (PC-001..PC-011) for the misconfigurations that
   actually hand over homelabs. Every finding explains what was found, why it matters, and how to
   fix it.
-- **A–F grade** — a simple, documented score (start at 100, subtract per finding by severity) you
+- **A-F grade** - a simple, documented score (start at 100, subtract per finding by severity) you
   can track over time or gate CI on.
-- **Optional Trivy delegation** — when the `trivy` binary is installed, image CVEs are merged into
+- **Optional Trivy delegation** - when the `trivy` binary is installed, image CVEs are merged into
   the report, aggregated to one finding per image.
 
 ### The checks
@@ -59,13 +59,13 @@ Full details in [docs/checks.md](docs/checks.md).
 
 ## How exposure is classified
 
-- **INTERNAL** — reachable only by other containers on the same Docker network.
-- **HOST** — published, but bound to a loopback address: reachable from the host machine only.
-- **LAN** — published on all interfaces: reachable from the local network.
-- **INTERNET** — routed by the reverse proxy, which is typically the Internet entry point.
+- **INTERNAL** - reachable only by other containers on the same Docker network.
+- **HOST** - published, but bound to a loopback address: reachable from the host machine only.
+- **LAN** - published on all interfaces: reachable from the local network.
+- **INTERNET** - routed by the reverse proxy, which is typically the Internet entry point.
 
 Honest note: static analysis cannot know whether your router forwards a port, so a service
-published on all interfaces is classified LAN — the safe, defensible answer. If the port *is*
+published on all interfaces is classified LAN - the safe, defensible answer. If the port *is*
 forwarded, it is Internet-facing and the findings only get more urgent. Details and limits in
 [docs/exposure-model.md](docs/exposure-model.md).
 
@@ -97,12 +97,12 @@ portcullis scan .
 
 ### Sample output
 
-Real output for a three-service stack — vaultwarden proxied by Traefik but also publishing a
+Real output for a three-service stack - vaultwarden proxied by Traefik but also publishing a
 port, postgres bound to loopback with a default password, watchtower with the Docker socket:
 
 ```text
 ╭────────────────────────────────────────────────────────────────╮
-│ Portcullis — security report for /home/user/homelab            │
+│ Portcullis - security report for /home/user/homelab            │
 │ Grade:  C   (score 60/100, 3 services, 4 findings)             │
 ╰────────────────────────────────────────────────────────────────╯
                     Service exposure
@@ -119,7 +119,7 @@ port, postgres bound to loopback with a default password, watchtower with the Do
 │                                                                        │
 │ Why it matters: Any code execution inside this container (a            │
 │ vulnerability in the app is enough) can start a privileged container   │
-│ and take over the whole host — data, other services, everything.       │
+│ and take over the whole host - data, other services, everything.       │
 │                                                                        │
 │ Fix: Remove the mount if the app does not truly need it. If it does    │
 │ (reverse proxy auto-discovery, dashboards, updaters), put a socket     │
@@ -151,7 +151,7 @@ already does well. The split:
 | | Pedagogical, prioritised report with a grade |
 
 When `trivy` is on your PATH, Portcullis runs it on every unique image and merges the results as
-regular findings — aggregated to one finding per image so the report stays readable. Everything
+regular findings - aggregated to one finding per image so the report stays readable. Everything
 else works exactly the same without Trivy installed: degraded, never broken.
 
 ## Privacy
@@ -162,13 +162,13 @@ its own behaviour, and is entirely opt-out with `--no-trivy`.)
 
 ## Roadmap
 
-- **M1 — Core scan** (done, v0.1): compose discovery and parsing, exposure engine, rules
-  PC-001..PC-011, app knowledge base, A–F grade, terminal and markdown reports, Trivy merge,
+- **M1 - Core scan** (done, v0.1): compose discovery and parsing, exposure engine, rules
+  PC-001..PC-011, app knowledge base, A-F grade, terminal and markdown reports, Trivy merge,
   `--fail-on` CI gate.
-- **M2 — Reverse proxy configuration files**: parse Traefik static (`traefik.yml`) and dynamic
-  file-provider configuration, and Caddyfiles — beyond the compose labels supported today.
-- **M3 — HTML report** and a richer Trivy merge.
-- **M4 — GitHub Action** and packaging / PyPI release.
+- **M2 - Reverse proxy configuration files**: parse Traefik static (`traefik.yml`) and dynamic
+  file-provider configuration, and Caddyfiles - beyond the compose labels supported today.
+- **M3 - HTML report** and a richer Trivy merge.
+- **M4 - GitHub Action** and packaging / PyPI release.
 
 Then, v2 ideas: Nginx Proxy Manager support, a live reachability probe to confirm exposure from
 the outside, and a web report.
@@ -176,7 +176,7 @@ the outside, and a web report.
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). The easiest and highest-impact contribution is a
-**knowledge base entry**: one small YAML file describing a self-hosted app you know well — no
+**knowledge base entry**: one small YAML file describing a self-hosted app you know well - no
 Python required.
 
 ## License

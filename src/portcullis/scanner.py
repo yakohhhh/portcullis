@@ -2,8 +2,8 @@
 
 1. Discover configuration files (compose files and their overrides).
 2. Parse them into the service graph (:class:`~portcullis.model.Stack`).
-3. Classify exposure, run the rules, enrich with the knowledge base and —
-   when available and enabled — with Trivy.
+3. Classify exposure, run the rules, enrich with the knowledge base and -
+   when available and enabled - with Trivy.
 4. Aggregate, score and prioritise.
 
 Reporters then render the returned :class:`~portcullis.model.ScanResult`.

@@ -1,4 +1,4 @@
-# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
 id: transmission
 name: Transmission
 category: downloads
@@ -14,9 +14,9 @@ exposure: lan
 risk_note: >
   Many Transmission containers expose the web interface with no password at
   all, or with the well-known transmission/transmission login. An attacker
-  who reaches it can reconfigure the daemon over its RPC interface —
+  who reaches it can reconfigure the daemon over its RPC interface -
   including the script that runs when a download finishes, which means
-  running their own commands on your machine — and drop files into any
+  running their own commands on your machine - and drop files into any
   folder the process can write. Keep the interface on the LAN and configure
   real credentials.
 references:

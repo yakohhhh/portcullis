@@ -1,4 +1,4 @@
-"""Caddy configuration parsing — milestone 2.
+"""Caddy configuration parsing - milestone 2.
 
 Portcullis v0.1 recognises caddy-docker-proxy compose labels (``caddy``,
 ``caddy.reverse_proxy``); that logic lives in :mod:`portcullis.exposure`.

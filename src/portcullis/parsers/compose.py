@@ -3,7 +3,7 @@
 Compose files are treated as untrusted input: they are read with a
 ``yaml.SafeLoader`` variant only, and any structural surprise degrades
 gracefully instead of crashing the scan (a homelab repository contains many
-hand-written files) — unparseable files are skipped with a warning unless the
+hand-written files) - unparseable files are skipped with a warning unless the
 user pointed at a single file. The parser intentionally supports the subset
 of the compose specification that matters for a security audit: services,
 images, published ports, networks, volumes, environment, labels,
@@ -43,7 +43,7 @@ class _ComposeSafeLoader(yaml.SafeLoader):
     PyYAML resolves unquoted ``22:22`` to the integer 1342 (base 60). The
     compose specification is YAML 1.2 and Docker's own parser keeps such
     values as strings, so the int resolver is re-registered without the
-    sexagesimal form — otherwise port mappings like ``- 53:53`` would parse
+    sexagesimal form - otherwise port mappings like ``- 53:53`` would parse
     into bogus port numbers.
     """
 
@@ -70,7 +70,7 @@ _ComposeSafeLoader.add_implicit_resolver(
 def parse_compose_groups(groups: list[ComposeGroup], root: Path) -> Stack:
     """Parse every compose group into a single :class:`Stack`.
 
-    Unparseable files are skipped with a warning on ``stack.warnings`` —
+    Unparseable files are skipped with a warning on ``stack.warnings`` -
     except when the user pointed at a single group, where failing loudly is
     more useful. Services and networks are namespaced with the relative
     directory of their compose file when needed, so unrelated projects in
@@ -96,12 +96,12 @@ def parse_compose_groups(groups: list[ComposeGroup], root: Path) -> Stack:
         services_cfg = merged.get("services")
         if not isinstance(services_cfg, dict):
             if services_cfg is not None:
-                stack.warnings.append(f"{group.base}: 'services' is not a mapping — file skipped")
+                stack.warnings.append(f"{group.base}: 'services' is not a mapping - file skipped")
             services_cfg = {}
         networks_cfg = merged.get("networks")
         if not isinstance(networks_cfg, dict):
             if networks_cfg is not None:
-                stack.warnings.append(f"{group.base}: 'networks' is not a mapping — ignored")
+                stack.warnings.append(f"{group.base}: 'networks' is not a mapping - ignored")
             networks_cfg = {}
 
         for net_name, net_cfg in networks_cfg.items():

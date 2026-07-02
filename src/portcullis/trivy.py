@@ -4,7 +4,7 @@ Portcullis deliberately does not reimplement what Trivy already does well
 (image CVE scanning, secret detection, Dockerfile analysis). When the
 ``trivy`` binary is available, it is invoked per unique image and its
 results are merged into the report as regular findings. When it is not,
-the scan works exactly the same without CVE data — degraded, never broken.
+the scan works exactly the same without CVE data - degraded, never broken.
 
 To keep the report readable (precision over noise), CVE results are
 aggregated into **one finding per image**, summarising counts and the most

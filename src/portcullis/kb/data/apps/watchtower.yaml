@@ -1,4 +1,4 @@
-# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
 id: watchtower
 name: Watchtower
 category: automation
@@ -13,7 +13,7 @@ risk_note: >
   Watchtower has no web UI and runs with the Docker socket mounted, which is
   equivalent to root on the host. Anyone who reaches its optional HTTP API
   can trigger container updates, and compromising the container itself means
-  full host takeover — it can start privileged containers or swap your images
+  full host takeover - it can start privileged containers or swap your images
   for malicious ones. Nothing about it should be reachable over the network.
 references:
   - https://containrrr.dev/watchtower/

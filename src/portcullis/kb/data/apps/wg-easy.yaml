@@ -1,4 +1,4 @@
-# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
 id: wg-easy
 name: wg-easy
 category: vpn
@@ -12,8 +12,8 @@ default_credentials: false
 exposure: lan
 risk_note: >
   The wg-easy web UI (port 51821) hands out complete WireGuard client
-  configurations, private keys included. An attacker who reaches it — it runs
-  without any password unless one is explicitly configured — downloads a
+  configurations, private keys included. An attacker who reaches it - it runs
+  without any password unless one is explicitly configured - downloads a
   profile and joins your private network as a trusted device. Only the
   WireGuard UDP port itself is safe to reach from outside; the admin UI
   belongs on the LAN or behind authenticated access, never proxied to the

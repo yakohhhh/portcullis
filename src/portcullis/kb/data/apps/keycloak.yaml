@@ -1,4 +1,4 @@
-# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
 id: keycloak
 name: Keycloak
 category: auth
@@ -15,7 +15,7 @@ risk_note: >
   Keycloak signs the login tokens that all your connected applications trust.
   An attacker with admin access can create accounts, reset any password and
   silently impersonate every user of every application wired to it. Many
-  tutorials bootstrap it with admin/admin — if that was ever copied, bots
+  tutorials bootstrap it with admin/admin - if that was ever copied, bots
   will find it, and the admin console should never face the Internet
   unprotected.
 references:

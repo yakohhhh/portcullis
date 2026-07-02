@@ -1,4 +1,4 @@
-# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
 id: redis
 name: Redis
 category: database
@@ -14,7 +14,7 @@ default_credentials: false
 exposure: never
 risk_note: >
   Redis ships with no password, so anyone who reaches port 6379 can read or
-  wipe everything in it — often live session tokens and job queues. Worse,
+  wipe everything in it - often live session tokens and job queues. Worse,
   an unauthenticated attacker can usually turn that into full remote code
   execution by abusing CONFIG SET to write cron jobs or SSH keys to disk, or
   by loading a malicious Redis module.

@@ -1,4 +1,4 @@
-name: Knowledge base — new application
+name: Knowledge base - new application
 description: Request (or contribute) a knowledge-base entry for a self-hosted application.
 title: "[KB]: "
 labels: ["knowledge-base"]
@@ -7,7 +7,7 @@ body:
     attributes:
       value: >-
         Knowledge-base entries live in `src/portcullis/kb/data/apps/` as small
-        YAML files — see `src/portcullis/kb/__init__.py` for the schema. Fill
+        YAML files - see `src/portcullis/kb/__init__.py` for the schema. Fill
         this form and we (or you, via a PR!) can turn it into an entry.
   - type: input
     id: app-name

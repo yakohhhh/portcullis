@@ -1,4 +1,4 @@
-"""Traefik configuration parsing — milestone 2.
+"""Traefik configuration parsing - milestone 2.
 
 Portcullis v0.1 already understands Traefik routing declared as compose
 labels (``traefik.enable``, ``traefik.http.routers.*``), which is how the
