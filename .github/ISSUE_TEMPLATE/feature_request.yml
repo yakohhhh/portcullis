@@ -1,0 +1,30 @@
+name: Feature request
+description: Suggest a new rule, parser, output format, or other improvement.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe the gap — a misconfiguration Portcullis misses, a workflow it does not fit, etc.
+      placeholder: "Portcullis does not detect containers running with the docker socket mounted read-write when..."
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: How you imagine it working (rule ID, CLI flag, report section...).
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Workarounds or other approaches you have thought about.
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Links, examples, or anything else that helps.

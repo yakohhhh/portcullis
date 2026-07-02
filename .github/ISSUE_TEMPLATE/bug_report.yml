@@ -1,0 +1,54 @@
+name: Bug report
+description: Portcullis crashed, missed a finding, or reported something wrong.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the problem, including the exact command you ran.
+      placeholder: "portcullis scan ./stack reported PC-003 on a service that has no published port..."
+    validations:
+      required: true
+  - type: textarea
+    id: compose-snippet
+    attributes:
+      label: Compose snippet (anonymized)
+      description: >-
+        The smallest docker-compose excerpt that reproduces the problem.
+        Please remove hostnames, domains, IP addresses, secrets, and anything
+        else you do not want public.
+      render: yaml
+      placeholder: |
+        services:
+          app:
+            image: example/app:latest
+            ports:
+              - "8080:80"
+  - type: textarea
+    id: expected-actual
+    attributes:
+      label: Expected vs actual behavior
+      description: What you expected Portcullis to report, and what it actually reported.
+      placeholder: |
+        Expected: exposure classified as LAN
+        Actual: exposure classified as INTERNAL
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Portcullis version
+      description: Output of `portcullis --version`.
+      placeholder: "portcullis, version 0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      description: OS and version (plus Python version if you know it).
+      placeholder: "Debian 12, Python 3.11"
+    validations:
+      required: true

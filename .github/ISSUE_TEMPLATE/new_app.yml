@@ -1,0 +1,67 @@
+name: Knowledge base — new application
+description: Request (or contribute) a knowledge-base entry for a self-hosted application.
+title: "[KB]: "
+labels: ["knowledge-base"]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Knowledge-base entries live in `src/portcullis/kb/data/apps/` as small
+        YAML files — see `src/portcullis/kb/__init__.py` for the schema. Fill
+        this form and we (or you, via a PR!) can turn it into an entry.
+  - type: input
+    id: app-name
+    attributes:
+      label: Application name
+      placeholder: "Vaultwarden"
+    validations:
+      required: true
+  - type: textarea
+    id: images
+    attributes:
+      label: Official image(s)
+      description: One image per line, as pulled from a registry (fnmatch patterns welcome).
+      placeholder: |
+        vaultwarden/server
+        */vaultwarden
+    validations:
+      required: true
+  - type: input
+    id: category
+    attributes:
+      label: Category
+      description: "One word, e.g. passwords, database, media, monitoring, automation."
+      placeholder: "passwords"
+    validations:
+      required: true
+  - type: textarea
+    id: why-sensitive
+    attributes:
+      label: Why is it sensitive?
+      description: >-
+        What does an attacker gain by reaching this application? This becomes
+        the `risk_note` shown in reports.
+      placeholder: "It holds every credential you own; the admin panel allows..."
+    validations:
+      required: true
+  - type: dropdown
+    id: exposure
+    attributes:
+      label: Recommended exposure
+      description: The loosest exposure that is still reasonable for this application.
+      options:
+        - never (nothing beyond the host itself)
+        - proxy-only (Internet is fine, but only through a reverse proxy)
+        - lan (LAN at most, never the Internet)
+        - public-ok (safe to expose directly)
+        - not sure
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Project homepage, hardening guide, security advisories... One URL per line.
+      placeholder: |
+        https://github.com/dani-garcia/vaultwarden
+        https://github.com/dani-garcia/vaultwarden/wiki/Hardening-Guide
