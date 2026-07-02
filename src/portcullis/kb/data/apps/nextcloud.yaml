@@ -1,0 +1,23 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: nextcloud
+name: Nextcloud
+category: files
+sensitivity: high
+images:
+  - nextcloud
+  - linuxserver/nextcloud
+  - nextcloud/all-in-one
+  - ghcr.io/nextcloud-releases/all-in-one
+default_ports: [80]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Nextcloud usually holds a complete copy of your digital life — files,
+  photos, contacts, calendars and everything people have shared with you. An
+  attacker who breaks into an account or an unpatched instance can quietly
+  download all of it and reach any service connected through Nextcloud apps.
+  Serve it only through a reverse proxy with HTTPS, and keep both the server
+  and its apps updated.
+references:
+  - https://docs.nextcloud.com/server/latest/admin_manual/installation/harden_server.html
+  - https://github.com/nextcloud/docker

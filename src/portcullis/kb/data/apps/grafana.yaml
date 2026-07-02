@@ -1,0 +1,22 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: grafana
+name: Grafana
+category: monitoring
+sensitivity: high
+images:
+  - grafana/grafana
+  - grafana/grafana-oss
+  - grafana/grafana-enterprise
+  - grafana
+default_ports: [3000]
+default_credentials: true
+exposure: proxy-only
+risk_note: >
+  Grafana ships with the well-known admin/admin login, and its dashboards map
+  out your whole infrastructure. An attacker who gets admin can query every
+  connected data source — databases, Prometheus, cloud accounts — through
+  Grafana's stored credentials and use that access to pivot deeper into the
+  network.
+references:
+  - https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/
+  - https://hub.docker.com/r/grafana/grafana

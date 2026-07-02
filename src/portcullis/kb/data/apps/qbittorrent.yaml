@@ -1,0 +1,23 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: qbittorrent
+name: qBittorrent
+category: downloads
+sensitivity: high
+images:
+  - qbittorrentofficial/qbittorrent-nox
+  - linuxserver/qbittorrent
+  - qbittorrent
+  - qbittorrent-nox
+default_ports: [8080, 6881]
+default_credentials: true
+exposure: lan
+risk_note: >
+  The qBittorrent web UI long shipped with the well-known admin/adminadmin
+  login, and many running instances still use it. Whoever logs in can do far
+  more than manage torrents: the "run external program on completion" option
+  turns UI access into command execution on the container or host, and
+  downloads can be written to any path the process can reach. Keep the UI
+  off the Internet and set a strong, unique password.
+references:
+  - https://github.com/qbittorrent/qBittorrent/wiki
+  - https://docs.linuxserver.io/images/docker-qbittorrent/

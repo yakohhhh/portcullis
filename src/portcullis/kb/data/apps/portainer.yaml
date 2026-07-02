@@ -1,0 +1,24 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: portainer
+name: Portainer
+category: management
+sensitivity: critical
+images:
+  - portainer/portainer-ce
+  - portainer/portainer-ee
+  - portainer/portainer
+  - portainer-ce
+  - portainer-ee
+  - portainer
+default_ports: [8000, 9000, 9443]
+default_credentials: false
+exposure: never
+risk_note: >
+  Portainer holds the keys to Docker itself: whoever controls it can start a
+  privileged container and take over the whole host, read every secret and
+  every volume of every stack. Freshly installed instances are even worse —
+  the first visitor is offered the admin account. Keep it on localhost or a
+  VPN; it has no business being reachable from the network at large.
+references:
+  - https://docs.portainer.io/
+  - https://docs.portainer.io/start/install-ce/server/docker

@@ -1,0 +1,20 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: authelia
+name: Authelia
+category: auth
+sensitivity: critical
+images:
+  - authelia/authelia
+  - authelia
+default_ports: [9091]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Authelia is the gatekeeper that decides who may log in to everything behind
+  your reverse proxy. An attacker who compromises it can mint valid sessions
+  and walk into every application it protects, without ever cracking a single
+  app password. Its login portal must only be reached through the reverse
+  proxy it works with, never via a directly published port.
+references:
+  - https://www.authelia.com/
+  - https://www.authelia.com/overview/security/measures/

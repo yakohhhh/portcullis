@@ -1,0 +1,22 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: sonarr
+name: Sonarr
+category: media-automation
+sensitivity: medium
+images:
+  - linuxserver/sonarr
+  - hotio/sonarr
+  - sonarr
+default_ports: [8989]
+default_credentials: false
+exposure: lan
+risk_note: >
+  Sonarr's interface and API key hand over your whole download pipeline: an
+  attacker can read the stored credentials of your download clients and
+  indexers, and the built-in "custom scripts" feature lets them run
+  arbitrary commands on the container or host. The project itself advises
+  against exposing it directly to the Internet. Keep it on the LAN, behind a
+  VPN, or behind a proxy that adds its own authentication.
+references:
+  - https://wiki.servarr.com/sonarr
+  - https://wiki.servarr.com/sonarr/faq

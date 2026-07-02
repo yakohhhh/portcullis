@@ -1,0 +1,19 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: uptime-kuma
+name: Uptime Kuma
+category: monitoring
+sensitivity: medium
+images:
+  - louislam/uptime-kuma
+  - uptime-kuma
+default_ports: [3001]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Uptime Kuma stores the internal URL and port of every service you monitor,
+  plus the notification credentials (SMTP passwords, Telegram or Slack
+  tokens) it alerts with. An attacker who gets in walks away with a labelled
+  map of your network and tokens to impersonate your alerting.
+references:
+  - https://github.com/louislam/uptime-kuma
+  - https://github.com/louislam/uptime-kuma/wiki/Reverse-Proxy

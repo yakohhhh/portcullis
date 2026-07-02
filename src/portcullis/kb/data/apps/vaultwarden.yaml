@@ -1,0 +1,19 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: vaultwarden
+name: Vaultwarden
+category: passwords
+sensitivity: critical
+images:
+  - vaultwarden/server
+  - "*/vaultwarden"
+  - bitwardenrs/server
+default_ports: [80]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Vaultwarden holds every credential you own. If an attacker reaches it —
+  especially its admin panel — a single weakness (outdated version, weak
+  admin token) compromises all your accounts at once.
+references:
+  - https://github.com/dani-garcia/vaultwarden
+  - https://github.com/dani-garcia/vaultwarden/wiki/Hardening-Guide

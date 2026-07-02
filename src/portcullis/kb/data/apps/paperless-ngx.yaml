@@ -1,0 +1,20 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: paperless-ngx
+name: Paperless-ngx
+category: documents
+sensitivity: high
+images:
+  - paperlessngx/paperless-ngx
+  - ghcr.io/paperless-ngx/paperless-ngx
+  - paperless-ngx
+default_ports: [8000]
+default_credentials: false
+exposure: lan
+risk_note: >
+  Paperless-ngx archives scans of your most sensitive papers — ID cards, tax
+  returns, medical records, contracts. A break-in hands an attacker a
+  complete identity-theft kit in searchable form. The project itself advises
+  against exposing it to the Internet; keep it on the LAN or behind a VPN.
+references:
+  - https://docs.paperless-ngx.com/setup/
+  - https://docs.paperless-ngx.com/faq/

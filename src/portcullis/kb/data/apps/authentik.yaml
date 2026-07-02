@@ -1,0 +1,22 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: authentik
+name: authentik
+category: auth
+sensitivity: critical
+images:
+  - goauthentik/server
+  - "*/goauthentik/server"
+  - beryju/authentik
+  - authentik
+default_ports: [9000, 9443]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  authentik is an identity provider: it stores your users and issues the
+  tokens every connected application trusts. An attacker who takes it over
+  can impersonate any user — including administrators — on every service that
+  uses it for login. Until the first-run setup flow has been completed, anyone
+  who reaches it can create the admin account themselves.
+references:
+  - https://docs.goauthentik.io/
+  - https://docs.goauthentik.io/docs/install-config/install/docker-compose

@@ -1,0 +1,22 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: radarr
+name: Radarr
+category: media-automation
+sensitivity: medium
+images:
+  - linuxserver/radarr
+  - hotio/radarr
+  - radarr
+default_ports: [7878]
+default_credentials: false
+exposure: lan
+risk_note: >
+  Radarr's interface and API key control your movie download pipeline: an
+  attacker can read the stored credentials of your download clients and
+  indexers, and the built-in "custom scripts" feature lets them run
+  arbitrary commands on the container or host. The project itself advises
+  against exposing it directly to the Internet. Keep it on the LAN, behind a
+  VPN, or behind a proxy that adds its own authentication.
+references:
+  - https://wiki.servarr.com/radarr
+  - https://wiki.servarr.com/radarr/faq

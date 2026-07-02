@@ -1,0 +1,22 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: mongodb
+name: MongoDB
+category: database
+sensitivity: critical
+images:
+  - mongo
+  - library/mongo
+  - mongodb/mongodb-community-server
+  - bitnami/mongodb
+default_ports: [27017]
+default_credentials: false
+exposure: never
+risk_note: >
+  The official MongoDB image accepts connections without any authentication
+  unless you explicitly configure a root user. Anyone who reaches port 27017
+  on such an instance can read, modify or wipe every collection — exposed
+  MongoDB servers have been mass-erased and replaced with ransom notes in
+  automated campaigns for years.
+references:
+  - https://hub.docker.com/_/mongo
+  - https://www.mongodb.com/docs/manual/administration/security-checklist/

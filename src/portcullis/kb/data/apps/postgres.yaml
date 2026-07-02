@@ -1,0 +1,22 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: postgres
+name: PostgreSQL
+category: database
+sensitivity: critical
+images:
+  - postgres
+  - library/postgres
+  - postgresql
+  - bitnami/postgresql
+default_ports: [5432]
+default_credentials: false
+exposure: never
+risk_note: >
+  PostgreSQL holds the raw data behind your applications — accounts, e-mails,
+  API tokens. An attacker who can reach port 5432 will brute-force the
+  "postgres" superuser and dump every table, and superuser access also allows
+  running commands on the server via COPY ... FROM PROGRAM. Automated scanners
+  find and mine exposed instances within hours.
+references:
+  - https://hub.docker.com/_/postgres
+  - https://www.postgresql.org/docs/current/auth-pg-hba-conf.html

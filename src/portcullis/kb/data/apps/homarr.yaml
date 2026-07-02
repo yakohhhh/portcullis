@@ -1,0 +1,22 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: homarr
+name: Homarr
+category: dashboard
+sensitivity: medium
+images:
+  - homarr-labs/homarr
+  - ghcr.io/homarr-labs/homarr
+  - ajnart/homarr
+  - homarr
+default_ports: [7575]
+default_credentials: false
+exposure: lan
+risk_note: >
+  Homarr is the front door to your homelab: it stores API keys for the
+  services it integrates (Sonarr, Radarr, Pi-hole and others) and is often
+  given the Docker socket to show container status. An attacker who gets in
+  receives a labelled map of everything you run plus tokens to control those
+  services — and Docker-level control of the host if the socket is mounted.
+references:
+  - https://homarr.dev/docs/getting-started/installation/docker
+  - https://github.com/homarr-labs/homarr

@@ -1,0 +1,21 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: pihole
+name: Pi-hole
+category: dns
+sensitivity: high
+images:
+  - pihole/pihole
+  - pihole
+default_ports: [53, 80, 443]
+default_credentials: false
+exposure: lan
+risk_note: >
+  Pi-hole answers DNS for every device on your network. An attacker who
+  controls it can quietly send your banking or e-mail traffic to look-alike
+  phishing sites, and the query log reveals every site everyone at home
+  visits. Exposed to the Internet it also becomes an open resolver that
+  criminals abuse for traffic-amplification attacks — keep it strictly on
+  the local network.
+references:
+  - https://docs.pi-hole.net/
+  - https://github.com/pi-hole/docker-pi-hole

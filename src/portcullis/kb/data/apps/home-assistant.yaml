@@ -1,0 +1,23 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: home-assistant
+name: Home Assistant
+category: home-automation
+sensitivity: high
+images:
+  - homeassistant/home-assistant
+  - ghcr.io/home-assistant/home-assistant
+  - linuxserver/homeassistant
+  - home-assistant
+  - homeassistant
+default_ports: [8123]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Home Assistant controls physical devices — door locks, alarms, cameras,
+  heating. An attacker who signs in can unlock your house, watch camera feeds
+  and read presence data that reveals when nobody is home. It also commonly
+  runs with host networking, so its port ends up reachable from the whole LAN
+  even without an explicit port mapping.
+references:
+  - https://www.home-assistant.io/installation/linux
+  - https://www.home-assistant.io/docs/configuration/securing/

@@ -1,0 +1,23 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: keycloak
+name: Keycloak
+category: auth
+sensitivity: critical
+images:
+  - keycloak/keycloak
+  - jboss/keycloak
+  - bitnami/keycloak
+  - keycloak
+default_ports: [8080, 8443]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Keycloak signs the login tokens that all your connected applications trust.
+  An attacker with admin access can create accounts, reset any password and
+  silently impersonate every user of every application wired to it. Many
+  tutorials bootstrap it with admin/admin — if that was ever copied, bots
+  will find it, and the admin console should never face the Internet
+  unprotected.
+references:
+  - https://www.keycloak.org/getting-started/getting-started-docker
+  - https://www.keycloak.org/server/reverseproxy

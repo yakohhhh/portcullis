@@ -1,0 +1,23 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: plex
+name: Plex Media Server
+category: media
+sensitivity: medium
+images:
+  - plexinc/pms-docker
+  - linuxserver/plex
+  - plex
+  - pms-docker
+default_ports: [32400]
+default_credentials: false
+exposure: lan
+risk_note: >
+  A compromised Plex server exposes your media collection and the accounts of
+  everyone who uses it. The danger is real: the 2022 LastPass breach started
+  on an engineer's outdated Plex install, where a known flaw let attackers
+  run their own code on the machine. Use Plex's built-in Remote Access for
+  outside viewing instead of proxying the port yourself, and keep the server
+  updated.
+references:
+  - https://support.plex.tv/articles/200289506-remote-access/
+  - https://github.com/plexinc/pms-docker

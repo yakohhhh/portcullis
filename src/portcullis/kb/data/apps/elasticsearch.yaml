@@ -1,0 +1,22 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: elasticsearch
+name: Elasticsearch
+category: database
+sensitivity: high
+images:
+  - elasticsearch
+  - library/elasticsearch
+  - docker.elastic.co/elasticsearch/elasticsearch
+  - bitnami/elasticsearch
+default_ports: [9200, 9300]
+default_credentials: false
+exposure: never
+risk_note: >
+  Elasticsearch typically indexes logs and full copies of application data,
+  and clusters running with security disabled answer any query on port 9200
+  with no login at all. Open clusters are behind some of the largest data
+  leaks on record and are routinely wiped by automated "meow" attacks; older
+  versions even allowed remote code execution through scripted queries.
+references:
+  - https://hub.docker.com/_/elasticsearch
+  - https://www.elastic.co/guide/en/elasticsearch/reference/current/secure-cluster.html

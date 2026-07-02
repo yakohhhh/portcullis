@@ -1,0 +1,21 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: jellyfin
+name: Jellyfin
+category: media
+sensitivity: medium
+images:
+  - jellyfin/jellyfin
+  - linuxserver/jellyfin
+  - jellyfin
+default_ports: [8096, 8920]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Jellyfin accounts unlock your whole media library, user list and viewing
+  history, and its login page is a routine brute-force target once visible
+  online. Flaws in older releases have let attackers read arbitrary files
+  from the server, so an outdated instance can leak much more than movies.
+  Expose it only through a reverse proxy with HTTPS and keep it updated.
+references:
+  - https://jellyfin.org/docs/general/post-install/networking/
+  - https://github.com/jellyfin/jellyfin

@@ -1,0 +1,22 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: syncthing
+name: Syncthing
+category: files
+sensitivity: high
+images:
+  - syncthing/syncthing
+  - linuxserver/syncthing
+  - syncthing
+default_ports: [8384, 22000]
+default_credentials: false
+exposure: lan
+risk_note: >
+  The Syncthing web GUI (port 8384) controls the whole daemon: whoever
+  reaches it can share any folder the process can read and sync its contents
+  to their own device, or push files into folders you already sync. The GUI
+  has no password until you set one, so keep it on localhost or the LAN and
+  protect it with a strong password. Only the sync protocol port (22000) is
+  meant to be reachable from outside.
+references:
+  - https://docs.syncthing.net/users/security.html
+  - https://docs.syncthing.net/users/guilisten.html

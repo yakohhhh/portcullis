@@ -1,0 +1,23 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: code-server
+name: code-server
+category: development
+sensitivity: critical
+images:
+  - codercom/code-server
+  - ghcr.io/coder/code-server
+  - linuxserver/code-server
+  - code-server
+default_ports: [8080, 8443]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  code-server is VS Code in the browser with a built-in terminal: whoever
+  logs in gets an interactive shell with the container's privileges and full
+  access to every mounted folder. From there an attacker reads SSH keys and
+  secrets and pivots to the rest of your network. A single password is often
+  the only barrier, so never expose it without a proxy enforcing strong
+  authentication.
+references:
+  - https://github.com/coder/code-server
+  - https://coder.com/docs/code-server/latest/guide

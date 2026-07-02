@@ -1,0 +1,21 @@
+# Knowledge base entry — see src/portcullis/kb/__init__.py for the schema.
+id: duplicati
+name: Duplicati
+category: backup
+sensitivity: high
+images:
+  - duplicati/duplicati
+  - linuxserver/duplicati
+  - duplicati
+default_ports: [8200]
+default_credentials: false
+exposure: lan
+risk_note: >
+  Duplicati's web UI controls backup jobs that read every folder mounted into
+  the container and stores the cloud-storage credentials and encryption
+  passphrases for them. An attacker who reaches it can exfiltrate or delete
+  all your backups, and job options such as run-script let them execute
+  commands inside the container.
+references:
+  - https://docs.duplicati.com/
+  - https://github.com/duplicati/duplicati
