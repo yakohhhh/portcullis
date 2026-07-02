@@ -25,6 +25,15 @@ OVERRIDE_BASENAMES = (
     "docker-compose.override.yml",
 )
 
+#: Static Traefik configuration files, matched by name anywhere in the tree.
+#: Dynamic (file-provider) configuration has arbitrary names and is located
+#: instead through the Traefik service's bind mounts (see the traefik parser).
+TRAEFIK_STATIC_BASENAMES = (
+    "traefik.yml",
+    "traefik.yaml",
+    "traefik.toml",
+)
+
 #: Directories that never contain user infrastructure files.
 IGNORED_DIRS = {
     ".git",
@@ -75,6 +84,25 @@ def find_compose_groups(path: Path) -> list[ComposeGroup]:
             "Expected one of: " + ", ".join(COMPOSE_BASENAMES)
         )
     return groups
+
+
+def find_traefik_configs(path: Path) -> list[Path]:
+    """Return every static Traefik configuration file under ``path``.
+
+    Matches only by well-known basename; dynamic file-provider configuration
+    is resolved later from the Traefik service's volume mounts.
+    """
+    path = path.resolve()
+    if path.is_file():
+        return [path] if path.name in TRAEFIK_STATIC_BASENAMES else []
+
+    found: list[Path] = []
+    for directory in _walk_dirs(path):
+        for name in TRAEFIK_STATIC_BASENAMES:
+            candidate = directory / name
+            if candidate.is_file():
+                found.append(candidate)
+    return found
 
 
 def _group_for(base: Path) -> ComposeGroup:

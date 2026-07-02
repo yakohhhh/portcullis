@@ -401,7 +401,7 @@ def service_bypasses_proxy(ctx: RuleContext) -> Iterable[Finding]:
     from portcullis.exposure import bypasses_proxy  # local import to avoid a cycle
 
     for name, service in ctx.stack.services.items():
-        if not bypasses_proxy(service):
+        if not bypasses_proxy(service, ctx.routing):
             continue
         direct = ", ".join(
             f"{p.host_ip + ':' if p.host_ip else ''}{p.host_port or '?'}" for p in service.ports

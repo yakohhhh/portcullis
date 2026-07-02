@@ -171,6 +171,7 @@ def _parse_service(name: str, cfg: dict[str, Any], file: Path, base_dir: Path) -
         name=name,
         image=ImageRef.parse(str(image_raw)) if image_raw else None,
         build="build" in cfg,
+        command=_parse_command(cfg.get("command")),
         ports=_parse_ports(cfg.get("ports")),
         networks=_parse_service_networks(cfg.get("networks")),
         network_mode=_as_str(cfg.get("network_mode")),
@@ -221,6 +222,21 @@ def _parse_depends_on(value: Any) -> list[str]:
     if isinstance(value, dict):
         return [str(key) for key in value]
     return _parse_string_list(value)
+
+
+def _parse_command(value: Any) -> list[str]:
+    """Parse a service ``command:`` (list form, or a shell string split naively).
+
+    Reverse-proxy configuration is often passed here (Traefik provider flags,
+    entrypoint addresses), so it is worth capturing. A string command is split
+    on whitespace: good enough to recover ``--flag=value`` tokens without
+    pulling in a full shell tokenizer.
+    """
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return [str(item) for item in value if item is not None]
+    return str(value).split()
 
 
 def _parse_service_networks(value: Any) -> list[str]:
