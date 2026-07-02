@@ -47,7 +47,7 @@ outputs:
 runs:
   using: composite
   steps:
-    - uses: actions/setup-python@v5
+    - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
       with:
         python-version: ${{ inputs.python-version }}
 
@@ -97,11 +97,14 @@ runs:
       shell: bash
       env:
         GH_TOKEN: ${{ github.token }}
-      run: gh pr comment "${{ github.event.pull_request.number }}" --body-file portcullis-report.md
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+      run: gh pr comment "$PR_NUMBER" --body-file portcullis-report.md
 
     - name: Enforce the severity gate
       if: ${{ steps.scan.outputs.gate_failed == 'true' }}
       shell: bash
+      env:
+        PC_FAILON: ${{ inputs.fail-on }}
       run: |
-        echo "::error::Portcullis gate failed: a finding is at or above '${{ inputs.fail-on }}'."
+        echo "::error::Portcullis gate failed: a finding is at or above '$PC_FAILON'."
         exit 1

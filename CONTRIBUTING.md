@@ -20,8 +20,16 @@ pytest
 ruff check src tests
 ```
 
-Ruff is configured in `pyproject.toml` (line length 100, `E F W I UP B SIM`). CI runs the same two
-commands.
+Ruff is configured in `pyproject.toml` (line length 100, `E F W I UP B SIM`). CI runs the same
+checks plus a coverage gate (`pytest --cov=portcullis --cov-fail-under=88`) and a security audit
+of the workflows - see [docs/ci.md](docs/ci.md) for the full pipeline.
+
+Optionally, install the pre-commit hooks so the basics are caught before every commit:
+
+```sh
+pipx install pre-commit
+pre-commit install
+```
 
 ## Project layout
 
@@ -29,24 +37,27 @@ commands.
 src/portcullis/
 ├── cli.py            # click entry point: `portcullis scan`
 ├── scanner.py        # orchestration: discover → parse → classify → rules → score
-├── discovery.py      # find compose files and group them with their overrides
-├── model.py          # domain model: Stack, Service, Finding, Severity, Exposure
-├── exposure.py       # exposure engine (ports × proxy labels × internal networks)
+├── discovery.py      # find compose files, proxy configs, group with overrides
+├── model.py          # domain model: Stack, Service, Finding, RoutingTable, ...
+├── exposure.py       # exposure engine (ports × proxy routing × internal networks)
 ├── scoring.py        # severity weights, 0-100 score, A-F grade
-├── trivy.py          # optional Trivy integration (one aggregated finding per image)
+├── trivy.py          # optional Trivy integration (CVEs, secrets, Dockerfiles)
 ├── parsers/
-│   ├── compose.py    # docker-compose parsing (yaml.safe_load only)
-│   ├── traefik.py    # milestone 2 - Traefik static/dynamic file config (stub)
-│   └── caddy.py      # milestone 2 - Caddyfile parsing (stub)
+│   ├── compose.py    # docker-compose parsing (include/extends/.env resolved)
+│   ├── traefik.py    # Traefik static config, command flags, dynamic file provider
+│   ├── caddy.py      # Caddyfile parsing (sites, snippets, reverse_proxy forms)
+│   └── _common.py    # upstream-host matching helpers shared by the proxies
 ├── rules/
 │   ├── base.py       # @rule decorator, RuleContext, registry
-│   └── footguns.py   # PC-001..PC-011
+│   └── footguns.py   # PC-001..PC-012
 ├── kb/
 │   ├── __init__.py   # KnowledgeBase loader and image matching
 │   └── data/apps/    # one YAML file per known application
 └── report/
     ├── terminal.py   # rich terminal report
-    └── markdown.py   # markdown report (CI artifacts, PR comments)
+    ├── markdown.py   # markdown report (CI artifacts, PR comments)
+    ├── html.py       # self-contained HTML report (no external resources)
+    └── json.py       # machine-readable report (stable schema, docs/json-schema.md)
 ```
 
 ## Add an app to the knowledge base

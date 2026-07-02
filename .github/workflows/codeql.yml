@@ -1,0 +1,40 @@
+name: CodeQL
+
+# Static analysis of the Python sources AND of the GitHub Actions workflows
+# themselves (the `actions` CodeQL language). Alerts land in the repository's
+# Security tab.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "26 7 * * 1" # weekly, Monday morning
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      security-events: write # upload the results
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [python, actions]
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@411c4c9a36b3fca4d674f06b6396b2c6d23522c6 # v3
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-and-quality
+      - name: Analyze
+        uses: github/codeql-action/analyze@411c4c9a36b3fca4d674f06b6396b2c6d23522c6 # v3
+        with:
+          category: "/language:${{ matrix.language }}"
