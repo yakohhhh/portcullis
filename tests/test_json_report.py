@@ -53,7 +53,8 @@ class TestDocument:
         assert doc["schema_version"] == SCHEMA_VERSION
         assert doc["tool"] == "portcullis"
         assert doc["tool_version"] == __version__
-        assert doc["scanned_path"] == "/home/user/homelab"
+        # str(Path(...)) is platform-specific (backslashes on Windows).
+        assert doc["scanned_path"] == str(Path("/home/user/homelab"))
         assert doc["score"] == 60
         assert doc["grade"] == "C"
 
