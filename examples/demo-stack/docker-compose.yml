@@ -1,0 +1,151 @@
+# Portcullis demo stack — a deliberately misconfigured homelab.
+#
+# DO NOT DEPLOY THIS STACK. It exists so that documentation and CI can run
+# `portcullis scan examples/demo-stack --no-trivy` against a realistic compose
+# file with known, stable findings. Every mistake is marked with a
+# "# DELIBERATE (PC-0xx)" comment; README.md in this directory maps each issue
+# to the rule that flags it.
+
+services:
+  # --- Edge ------------------------------------------------------------------
+  traefik:
+    image: traefik:v3.1
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedByDefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+    ports:
+      - "80:80" # expected: the reverse proxy is the entry point of the stack
+      - "443:443"
+    volumes:
+      # DELIBERATE (PC-001): the Docker socket is an API endpoint; mounting it
+      # ":ro" only protects the socket file, not the daemon behind it.
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - proxy
+    restart: unless-stopped
+
+  # --- Applications ------------------------------------------------------------
+  vaultwarden:
+    image: vaultwarden/server:1.32.0
+    environment:
+      DOMAIN: https://vault.example.lan
+      SIGNUPS_ALLOWED: "false"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.vaultwarden.rule=Host(`vault.example.lan`)
+      - traefik.http.routers.vaultwarden.entrypoints=websecure
+      - traefik.http.services.vaultwarden.loadbalancer.server.port=80
+    ports:
+      # DELIBERATE (PC-011): already routed through Traefik above, yet also
+      # published directly — this port skips the proxy's TLS and middlewares.
+      - "8081:80"
+    volumes:
+      - vaultwarden-data:/data
+    networks:
+      - proxy
+    restart: unless-stopped
+
+  jellyfin:
+    image: jellyfin/jellyfin:10.9.11
+    ports:
+      # DELIBERATE (PC-009): published on every interface while the knowledge
+      # base recommends proxy-only exposure for Jellyfin.
+      - "8096:8096"
+    volumes:
+      - jellyfin-config:/config
+      - /srv/media:/media:ro
+    networks:
+      - proxy
+    restart: unless-stopped
+
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:2025.6
+    # DELIBERATE (PC-003): host networking binds every listening port on every
+    # host interface, out of reach of `ports:` and of the reverse proxy. This
+    # also triggers PC-009: a proxy-only app becomes reachable from the LAN.
+    network_mode: host
+    volumes:
+      - homeassistant-config:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+
+  # --- Management ------------------------------------------------------------
+  portainer:
+    # DELIBERATE (PC-005): no tag pins this image — `latest` is implied.
+    image: portainer/portainer-ce
+    volumes:
+      # DELIBERATE (PC-001): read-write Docker socket — whoever compromises
+      # Portainer controls the Docker daemon, and therefore the host.
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer-data:/data
+    networks:
+      - proxy
+    restart: unless-stopped
+
+  duplicati:
+    image: duplicati/duplicati:2.0.8.1
+    # DELIBERATE (PC-004): SYS_ADMIN is most of root's power in one capability;
+    # a backup tool does not need it to read mounted folders.
+    cap_add:
+      - SYS_ADMIN
+    ports:
+      # Bound to loopback: reachable from the host only (exposure HOST) —
+      # the sane way to keep an admin UI around for occasional use.
+      - "127.0.0.1:8200:8200"
+    volumes:
+      - duplicati-config:/data
+      - /srv:/source:ro
+    networks:
+      - proxy
+    restart: unless-stopped
+
+  # --- Data ------------------------------------------------------------------
+  postgres:
+    image: postgres:16.4
+    environment:
+      POSTGRES_DB: apps
+      POSTGRES_USER: apps
+      # DELIBERATE (PC-008): a well-known default password on a database that
+      # the `ports:` entry below makes reachable from the network.
+      POSTGRES_PASSWORD: postgres
+    ports:
+      # DELIBERATE (PC-010, PC-009): a database port published on all
+      # interfaces — containers reach it by service name, nobody else should.
+      - "5432:5432"
+    networks:
+      # DELIBERATE: also attached to the non-internal proxy network, so the
+      # published port above is actually reachable (an internal-only network
+      # has no gateway and would neutralise the mistake).
+      - proxy
+      - backend
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    # Clean counter-example: pinned tag, no published port, and attached only
+    # to the internal backend network — Portcullis classifies it as INTERNAL
+    # and raises no finding for it.
+    image: redis:7.2.5-alpine
+    networks:
+      - backend
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+
+networks:
+  proxy:
+    driver: bridge
+  backend:
+    internal: true
+
+volumes:
+  vaultwarden-data:
+  jellyfin-config:
+  homeassistant-config:
+  portainer-data:
+  duplicati-config:
+  postgres-data:
+  redis-data:
