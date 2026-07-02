@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: minio
+name: MinIO
+category: storage
+sensitivity: high
+images:
+  - minio/minio
+  - minio
+default_ports: [9000, 9001]
+default_credentials: true
+exposure: proxy-only
+risk_note: >
+  MinIO is an S3-compatible object storage server that holds whatever buckets and files you put in
+  it, which is often backups, application data, or user uploads. Older builds shipped a well-known
+  default root login (minioadmin/minioadmin), so an attacker who reaches the API or the admin
+  console can list buckets, download or delete every object, and mint new access keys. Change the
+  root credentials, and keep both the API port and the console behind an authenticating reverse
+  proxy rather than exposing them directly.
+references:
+  - https://min.io/docs/minio/container/index.html
+  - https://hub.docker.com/r/minio/minio

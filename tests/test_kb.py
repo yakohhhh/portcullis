@@ -149,17 +149,32 @@ class TestBundledEntriesAreValid:
         filenames = {file.stem for file in self.DATA_DIR.glob("*.yaml")}
         assert set(ids) == filenames
 
+    #: Bare image patterns that are matched against an image's last path
+    #: component (see AppInfo.matches). These are generic enough to collide
+    #: with unrelated images (e.g. `server` matches `vaultwarden/server`), so a
+    #: KB entry must qualify them with a repository path or a `*/name` wildcard.
+    GENERIC_BARE_TOKENS = {
+        "server", "core", "app", "web", "api", "db", "data", "backend",
+        "frontend", "service", "main", "worker", "docker", "latest",
+    }
+
     def test_every_entry_respects_the_schema(self) -> None:
         for app in KnowledgeBase.load(self.DATA_DIR).apps:
             assert app.exposure_recommendation in self.VALID_EXPOSURES, app.id
             assert app.sensitivity in self.VALID_SENSITIVITIES, app.id
             assert app.image_patterns, app.id
             assert all(isinstance(port, int) for port in app.default_ports), app.id
-            # Guard against overmatching: no bare "*" or "*x*" patterns.
             for pattern in app.image_patterns:
+                # No pattern that matches anything (bare "*" or "*x*").
                 assert pattern.strip("*"), f"{app.id}: pattern {pattern!r} matches anything"
                 assert not (pattern.startswith("*") and pattern.endswith("*")), (
                     f"{app.id}: pattern {pattern!r} is too broad"
+                )
+                # No generic bare token: it would overmatch unrelated images by
+                # their last path component.
+                assert pattern.lower() not in self.GENERIC_BARE_TOKENS, (
+                    f"{app.id}: bare pattern {pattern!r} overmatches unrelated images; "
+                    "qualify it with a repository path or a '*/name' wildcard"
                 )
 
 

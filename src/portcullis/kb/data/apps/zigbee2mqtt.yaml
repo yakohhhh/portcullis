@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: zigbee2mqtt
+name: Zigbee2MQTT
+category: home-automation
+sensitivity: high
+images:
+  - koenkk/zigbee2mqtt
+  - ghcr.io/koenkk/zigbee2mqtt
+  - zigbee2mqtt
+default_ports: [8080]
+default_credentials: false
+exposure: lan
+risk_note: >
+  Zigbee2MQTT is the bridge that controls every Zigbee device in your home - door locks, motion
+  and contact sensors, smart plugs and alarms. Its web UI has no login by default, so anyone who
+  can reach it can unlock doors, disable sensors, pair rogue devices, or read the network keys and
+  MQTT settings. It can also be told to run over-the-air firmware updates on your devices. Keep it
+  strictly on the LAN or behind an authenticating proxy, and enable the built-in auth token.
+references:
+  - https://www.zigbee2mqtt.io/guide/installation/02_docker.html
+  - https://github.com/Koenkk/zigbee2mqtt

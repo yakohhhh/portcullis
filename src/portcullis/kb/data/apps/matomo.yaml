@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: matomo
+name: Matomo
+category: analytics
+sensitivity: medium
+images:
+  - matomo
+  - library/matomo
+  - bitnami/matomo
+default_ports: [80]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Matomo stores the detailed browsing history of everyone who visits your websites - IP addresses,
+  pages viewed, and visitor profiles - so a break-in exposes sensitive analytics on your users. Its
+  admin login also controls tracking code and settings, and Matomo runs PHP, so an attacker who
+  compromises the admin account or an outdated install can pivot to running code on the server. Put
+  it behind a reverse proxy with a strong admin password and keep it updated.
+references:
+  - https://hub.docker.com/_/matomo
+  - https://matomo.org/faq/on-premise/

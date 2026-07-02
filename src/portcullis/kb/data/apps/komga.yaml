@@ -1,0 +1,18 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: komga
+name: Komga
+category: media
+sensitivity: medium
+images:
+  - gotson/komga
+  - komga
+default_ports: [25600]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Komga is a comics and manga server that holds your library along with user accounts and API keys.
+  An attacker who reaches the interface or REST API can take over the admin account, create users,
+  and download every book you have stored. It is safe to reach remotely only behind a reverse proxy
+  that enforces HTTPS and login.
+references:
+  - https://komga.org/docs/installation/docker/

@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: changedetection-io
+name: changedetection.io
+category: monitoring
+sensitivity: medium
+images:
+  - ghcr.io/dgtlmoon/changedetection.io
+  - dgtlmoon/changedetection.io
+  - changedetection.io
+default_ports: [5000]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  changedetection.io watches web pages for you and has no password set by default, so an attacker
+  who reaches port 5000 can read every URL you monitor and any notification credentials or webhook
+  tokens you configured. The tool can fetch arbitrary URLs on your behalf, which can be abused to
+  probe internal services, and its notification and custom-header features can leak secrets. Set a
+  password and keep it behind an authenticating reverse proxy.
+references:
+  - https://github.com/dgtlmoon/changedetection.io
+  - https://hub.docker.com/r/dgtlmoon/changedetection.io

@@ -1,0 +1,22 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: mealie
+name: Mealie
+category: productivity
+sensitivity: low
+images:
+  - ghcr.io/mealie-recipes/mealie
+  - hkotel/mealie
+  - mealie
+default_ports: [9000]
+default_credentials: true
+risk_note: >
+  Mealie ships a well-known first-run admin account (changeme@example.com / MyPassword) that must be
+  changed immediately. If left as default or otherwise over-exposed, an attacker gains full admin
+  access to your recipe library, user accounts and API tokens, and can use the account and
+  token-management features to lock you out or pivot into any integrations you have wired up.
+  Recipe data is low value, but the exposed admin panel is the real risk. Keep it behind an
+  authenticating reverse proxy.
+exposure: proxy-only
+references:
+  - https://docs.mealie.io/documentation/getting-started/installation/installation-checklist/
+  - https://github.com/mealie-recipes/mealie/pkgs/container/mealie

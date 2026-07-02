@@ -1,0 +1,20 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: heimdall
+name: Heimdall
+category: dashboard
+sensitivity: medium
+images:
+  - linuxserver/heimdall
+  - heimdall
+default_ports: [80, 443]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Heimdall is an application dashboard that lists and links to all of your self-hosted services, and
+  its enhanced app tiles store the credentials or API keys needed to show live stats. An attacker who
+  reaches it gets a full inventory of your internal services plus any keys saved in those tiles. It
+  can require a login but is not built to face the Internet unauthenticated, so keep it behind an
+  authenticating reverse proxy.
+references:
+  - https://heimdall.site/
+  - https://docs.linuxserver.io/images/docker-heimdall/

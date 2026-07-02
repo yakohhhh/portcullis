@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: miniflux
+name: Miniflux
+category: feeds
+sensitivity: medium
+images:
+  - miniflux/miniflux
+  - ghcr.io/miniflux/miniflux
+  - miniflux
+default_ports: [8080]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Miniflux is a minimalist single-user RSS reader whose admin account is set at deploy time via
+  environment variables. An attacker who guesses or captures that admin login gets your entire
+  reading history, all subscribed feeds including any private ones, and the API tokens used by
+  connected clients. It talks to a Postgres backend, so keep the database internal and place
+  Miniflux itself behind an authenticating reverse proxy.
+references:
+  - https://miniflux.app/docs/docker.html
+  - https://github.com/miniflux/v2

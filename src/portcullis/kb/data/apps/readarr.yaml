@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: readarr
+name: Readarr
+category: media-automation
+sensitivity: medium
+images:
+  - linuxserver/readarr
+  - hotio/readarr
+  - ghcr.io/hotio/readarr
+  - readarr
+default_ports: [8787]
+default_credentials: false
+exposure: lan
+risk_note: >
+  Readarr's web interface and API key hand over your whole book and audiobook download pipeline: an
+  attacker can read the stored credentials of your download clients and indexers, browse and change
+  your library, and the custom-scripts feature lets them run arbitrary commands on the container or
+  host. Keep it on the LAN or behind an authenticating proxy.
+references:
+  - https://wiki.servarr.com/readarr
+  - https://docs.linuxserver.io/images/docker-readarr/

@@ -1,0 +1,20 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: joplin-server
+name: Joplin Server
+category: documents
+sensitivity: high
+images:
+  - joplin/server
+  - florider89/joplin-server
+default_ports: [22300]
+default_credentials: true
+exposure: proxy-only
+risk_note: >
+  Joplin Server synchronizes your Joplin notes and attachments across devices, so it stores the
+  full contents of everything you write, which is often personal or work-sensitive material. It is
+  set up with a default admin user (admin@localhost / admin) that must be changed on first login,
+  and an attacker who reaches an unchanged instance can read and delete synced data and create
+  accounts. Change the admin password and put it behind an authenticating reverse proxy with HTTPS.
+references:
+  - https://joplinapp.org/help/apps/clipper/
+  - https://hub.docker.com/r/joplin/server

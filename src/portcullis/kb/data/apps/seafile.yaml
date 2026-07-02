@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: seafile
+name: Seafile
+category: files
+sensitivity: high
+images:
+  - seafileltd/seafile-mc
+  - seafileltd/seafile-pro-mc
+  - seafile-mc
+default_ports: [80, 443]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Seafile is a file sync-and-share server that stores all of your libraries, shared links, and
+  arbitrary uploaded files. An attacker who takes over the admin account can read, download, or
+  delete every user's files, create share links to leak them, and add accounts to keep access. It
+  handles genuinely sensitive data, so keep it behind an authenticating reverse proxy with HTTPS
+  and never publish the raw port to the Internet.
+references:
+  - https://manual.seafile.com/docker/deploy_seafile_with_docker/
+  - https://hub.docker.com/r/seafileltd/seafile-mc

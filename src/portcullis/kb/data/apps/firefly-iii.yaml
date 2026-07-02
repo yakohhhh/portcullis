@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: firefly-iii
+name: Firefly III
+category: finance
+sensitivity: high
+images:
+  - fireflyiii/core
+  - "*/fireflyiii"
+default_ports: [8080]
+default_credentials: false
+risk_note: >
+  Firefly III is a personal finance manager that holds your complete financial history - every account
+  balance, transaction, payee, bill and budget, often imported directly from your bank. There is no default
+  login (you create the admin at first run), but if the instance is over-exposed an attacker who gets in can
+  read your entire money trail, learn where you bank and how much you have, and mint personal access tokens
+  to keep pulling data through the API. That is a serious privacy and fraud-targeting exposure. Never put it
+  on the open Internet without an authenticating reverse proxy.
+exposure: proxy-only
+references:
+  - https://docs.firefly-iii.org/how-to/firefly-iii/installation/docker/
+  - https://hub.docker.com/r/fireflyiii/core

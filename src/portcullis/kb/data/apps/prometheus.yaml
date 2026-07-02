@@ -1,0 +1,20 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: prometheus
+name: Prometheus
+category: monitoring
+sensitivity: high
+images:
+  - prom/prometheus
+  - prometheus
+default_ports: [9090]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Prometheus has no built-in authentication, so anyone who reaches port 9090 can browse every
+  metric it scrapes: hostnames, service topology, request rates, and often secrets that leak into
+  labels or scrape targets. The admin API, when enabled, also lets a visitor delete stored data.
+  Worse, the query and config endpoints can be abused for server-side request forgery against your
+  internal network. Keep it on the LAN or behind an authenticating reverse proxy.
+references:
+  - https://prometheus.io/docs/prometheus/latest/installation/
+  - https://hub.docker.com/r/prom/prometheus

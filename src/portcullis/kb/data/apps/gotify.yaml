@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: gotify
+name: Gotify
+category: monitoring
+sensitivity: medium
+images:
+  - gotify/server
+  - ghcr.io/gotify/server
+default_ports: [80]
+default_credentials: true
+exposure: proxy-only
+risk_note: >
+  Gotify is a push-notification server that ships with a well-known default login (admin/admin).
+  An attacker who reaches it and finds the default password unchanged gains full admin control:
+  they can read your notification history, create or steal application tokens, and send fake alerts
+  to your devices. Since Gotify usually carries server and monitoring alerts, this exposes details
+  about your systems. Change the default password and keep it behind an authenticating reverse
+  proxy.
+references:
+  - https://gotify.net/docs/install
+  - https://hub.docker.com/r/gotify/server

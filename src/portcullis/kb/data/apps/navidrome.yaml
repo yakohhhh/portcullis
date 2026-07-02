@@ -1,0 +1,18 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: navidrome
+name: Navidrome
+category: media
+sensitivity: medium
+images:
+  - deluan/navidrome
+  - navidrome
+default_ports: [4533]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Navidrome streams your personal music library and stores user accounts with hashed passwords.
+  An attacker who reaches the web interface or Subsonic API can create or hijack accounts, browse
+  and download your entire collection, and read the server configuration. It is meant to be reached
+  remotely, but only behind a reverse proxy that enforces HTTPS and strong authentication.
+references:
+  - https://www.navidrome.org/docs/installation/docker/

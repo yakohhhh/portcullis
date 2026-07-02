@@ -1,0 +1,22 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: bazarr
+name: Bazarr
+category: media-automation
+sensitivity: medium
+images:
+  - linuxserver/bazarr
+  - hotio/bazarr
+  - ghcr.io/hotio/bazarr
+  - bazarr
+default_ports: [6767]
+default_credentials: false
+exposure: lan
+risk_note: >
+  Bazarr manages subtitle downloads for Sonarr and Radarr, so it holds their addresses and API keys
+  plus the logins for the subtitle providers you use. An attacker who reaches its web UI or API key
+  can read those stored credentials and reconfigure the app, and the custom post-processing script
+  feature lets them run arbitrary commands on the container or host. Keep it on the LAN or behind an
+  authenticating proxy.
+references:
+  - https://wiki.bazarr.media/
+  - https://docs.linuxserver.io/images/docker-bazarr/

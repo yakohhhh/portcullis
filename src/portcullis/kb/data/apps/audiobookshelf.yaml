@@ -1,0 +1,19 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: audiobookshelf
+name: Audiobookshelf
+category: media
+sensitivity: medium
+images:
+  - ghcr.io/advplyr/audiobookshelf
+  - advplyr/audiobookshelf
+  - audiobookshelf
+default_ports: [13378]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Audiobookshelf hosts your audiobook and podcast library plus per-user accounts and listening
+  progress. An attacker who reaches the interface or API can take over the admin account, add or
+  delete users, and download the whole library, and past versions have had file-upload and path
+  handling flaws. Expose it only behind a reverse proxy with HTTPS and authentication.
+references:
+  - https://www.audiobookshelf.org/docs

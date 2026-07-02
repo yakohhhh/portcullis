@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: wiki-js
+name: Wiki.js
+category: documents
+sensitivity: high
+images:
+  - ghcr.io/requarks/wiki
+  - requarks/wiki
+  - wiki
+default_ports: [3000, 3443]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Wiki.js is a self-hosted wiki that commonly stores internal documentation, procedures, and other
+  sensitive knowledge. The first-run setup creates an administrator account, and anyone who takes
+  over that account can read every page, change or delete content, add users, and reconfigure
+  authentication and integrations. Complete the setup with a strong admin password and keep it
+  behind an authenticating reverse proxy instead of exposing the raw port.
+references:
+  - https://docs.requarks.io/install/docker
+  - https://github.com/requarks/wiki

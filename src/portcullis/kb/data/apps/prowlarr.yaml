@@ -1,0 +1,23 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: prowlarr
+name: Prowlarr
+category: media-automation
+sensitivity: medium
+images:
+  - linuxserver/prowlarr
+  - hotio/prowlarr
+  - ghcr.io/hotio/prowlarr
+  - prowlarr
+default_ports: [9696]
+default_credentials: false
+exposure: lan
+risk_note: >
+  Prowlarr is the indexer manager that feeds Sonarr, Radarr and the other *arr apps, so it stores
+  the logins and API keys for every tracker and each connected app. An attacker who reaches its web
+  UI or API key can read those stored credentials, search your private trackers, and push
+  configuration to the connected apps. The notification and custom-script settings can also be
+  abused to run commands on the container or host. Keep it on the LAN or behind an authenticating
+  proxy.
+references:
+  - https://wiki.servarr.com/prowlarr
+  - https://docs.linuxserver.io/images/docker-prowlarr/

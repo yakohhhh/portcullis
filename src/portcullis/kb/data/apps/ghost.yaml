@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: ghost
+name: Ghost
+category: cms
+sensitivity: high
+images:
+  - ghost
+  - library/ghost
+default_ports: [2368]
+default_credentials: false
+exposure: public-ok
+risk_note: >
+  Ghost is a publishing platform built to be public, but its admin panel at /ghost is the crown
+  jewel: whoever gets in can post or deface content, add other admins, and change your site's
+  configuration. The admin area and the integrations/API keys give broad control over your
+  content and connected services, so protect that path with a strong password and keep the
+  software patched. Leaving the setup wizard reachable on a fresh install lets a stranger claim
+  the very first owner account.
+references:
+  - https://ghost.org/docs/install/docker/
+  - https://hub.docker.com/_/ghost

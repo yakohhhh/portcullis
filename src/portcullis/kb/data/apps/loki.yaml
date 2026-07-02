@@ -1,0 +1,20 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: loki
+name: Grafana Loki
+category: monitoring
+sensitivity: high
+images:
+  - grafana/loki
+  - loki
+default_ports: [3100]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Loki stores your aggregated logs and ships with no authentication on its HTTP API, so anyone who
+  reaches port 3100 can query and read every log line you collect. Application logs routinely
+  contain tokens, session IDs, internal URLs, user data, and error traces that map out your
+  systems, and the API also lets a visitor push fake entries or delete data. Keep it on the LAN or
+  behind an authenticating reverse proxy, never exposed directly to the Internet.
+references:
+  - https://grafana.com/docs/loki/latest/setup/install/docker/
+  - https://hub.docker.com/r/grafana/loki

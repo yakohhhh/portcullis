@@ -1,0 +1,21 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: organizr
+name: Organizr
+category: dashboard
+sensitivity: medium
+images:
+  - organizr/organizr
+  - ghcr.io/organizr/organizr
+  - organizr
+default_ports: [80]
+default_credentials: false
+exposure: proxy-only
+risk_note: >
+  Organizr is a homelab portal that groups your services into tabs and can proxy or embed them behind
+  a single login, so it holds accounts, tab settings, and often API keys for the tools it integrates.
+  An attacker who reaches it gets a map of everything you run and, if they break the login, a gateway
+  into the embedded apps. It has a database of user accounts and its built-in auth has had known
+  bypass bugs, so keep it behind an authenticating reverse proxy and keep it patched.
+references:
+  - https://docs.organizr.app/
+  - https://github.com/causefx/Organizr

@@ -1,0 +1,22 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: wordpress
+name: WordPress
+category: cms
+sensitivity: high
+images:
+  - wordpress
+  - library/wordpress
+  - bitnami/wordpress
+default_ports: [80]
+default_credentials: false
+exposure: public-ok
+risk_note: >
+  WordPress is designed to face the public, but its admin dashboard at /wp-admin plus the plugin
+  and theme system make it one of the most attacked applications on the Internet. An attacker who
+  gets in, or who exploits a vulnerable plugin, can run arbitrary PHP on your server, steal the
+  site database, and use the machine to attack others. Enforce a strong admin login, keep core and
+  every plugin updated, and consider protecting /wp-admin and /wp-login.php behind extra
+  authentication.
+references:
+  - https://hub.docker.com/_/wordpress
+  - https://developer.wordpress.org/advanced-administration/security/hardening/

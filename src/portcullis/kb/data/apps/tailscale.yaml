@@ -1,0 +1,22 @@
+# Knowledge base entry - see src/portcullis/kb/__init__.py for the schema.
+id: tailscale
+name: Tailscale
+category: vpn
+sensitivity: high
+images:
+  - tailscale/tailscale
+  - ghcr.io/tailscale/tailscale
+  - tailscale
+default_ports: [41641]
+default_credentials: false
+exposure: lan
+risk_note: >
+  Tailscale is a mesh VPN client that joins a machine to your private tailnet over WireGuard. The
+  daemon itself listens on a UDP port and does not need a public web interface, but the real risk is
+  credential leakage: an auth key or API key that ends up in a container environment, a git repo, or
+  a compromised host lets an attacker enroll their own device into your tailnet and reach everything
+  it can reach, and a subnet-router or exit-node node exposes whole networks behind it. Keep auth
+  keys ephemeral and tightly scoped, lock down the tailnet ACLs, and never bake long-lived keys into
+  images.
+references:
+  - https://tailscale.com/kb/1282/docker
