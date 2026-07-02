@@ -154,9 +154,17 @@ already does well. The split:
 | | Compose foot-gun rules (PC-001..PC-011) |
 | | Pedagogical, prioritised report with a grade |
 
-When `trivy` is on your PATH, Portcullis runs it on every unique image and merges the results as
-regular findings - aggregated to one finding per image so the report stays readable. Everything
-else works exactly the same without Trivy installed: degraded, never broken.
+When `trivy` is on your PATH, Portcullis runs its three relevant scanners and merges the results as
+regular findings:
+
+- `trivy image` - known image vulnerabilities (CVEs), one finding per image;
+- `trivy fs --scanners secret` - secrets committed in the tree, one finding per file;
+- `trivy config` - Dockerfile misconfigurations, one finding per Dockerfile.
+
+Results are aggregated (per image / file / Dockerfile, never one finding per occurrence) so the
+report stays readable, and a secret that Portcullis's own PC-008 rule already flagged is not
+reported twice. Everything else works exactly the same without Trivy installed: degraded, never
+broken.
 
 ## Privacy
 
@@ -172,8 +180,8 @@ its own behaviour, and is entirely opt-out with `--no-trivy`.)
 - **M2 - Reverse proxy configuration files**: Traefik (static `traefik.yml`/`.toml`, `command:`
   flags, dynamic file provider) and Caddyfile parsing are **done**; a wider knowledge base is in
   progress.
-- **M3 - Reports and enrichment**: HTML report is **done** (`--format html`, self-contained); a
-  richer Trivy merge (secrets, Dockerfile) is in progress.
+- **M3 - Reports and enrichment** (done): self-contained HTML report (`--format html`) and a
+  richer Trivy merge (image CVEs, committed secrets, Dockerfile misconfigurations).
 - **M4 - GitHub Action** and packaging / PyPI release.
 
 Then, v2 ideas: Nginx Proxy Manager support, a live reachability probe to confirm exposure from

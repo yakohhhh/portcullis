@@ -47,7 +47,7 @@ def scan(path: Path, *, use_trivy: bool | None = None) -> ScanResult:
     if use_trivy is None:
         use_trivy = trivy.is_available()
     if use_trivy and trivy.is_available():
-        findings.extend(trivy.scan_stack(stack))
+        findings.extend(trivy.scan_stack(stack, existing_findings=findings))
 
     findings = scoring.sort_findings(findings)
     total = scoring.score(findings)
