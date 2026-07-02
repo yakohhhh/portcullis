@@ -1,0 +1,22 @@
+name: Dependency review
+
+# Blocks pull requests that introduce dependencies with known vulnerabilities.
+# The action compares manifests through the Dependency Graph API, so it needs
+# no checkout and no write permission; failures surface as the failing check
+# and its job summary (a PR comment would not work for fork PRs anyway, whose
+# GITHUB_TOKEN is always read-only on a public repository).
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Review dependency changes
+        uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4.9.0
+        with:
+          fail-on-severity: high

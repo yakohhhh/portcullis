@@ -3,6 +3,8 @@
 > See what your self-hosted stack really exposes to the Internet - and how to fix it.
 
 [![CI](https://github.com/yakohhhh/portcullis/actions/workflows/ci.yml/badge.svg)](https://github.com/yakohhhh/portcullis/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/yakohhhh/portcullis/actions/workflows/codeql.yml/badge.svg)](https://github.com/yakohhhh/portcullis/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/yakohhhh/portcullis/badge)](https://scorecard.dev/viewer/?uri=github.com/yakohhhh/portcullis)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
 [![Status: alpha](https://img.shields.io/badge/status-alpha-orange.svg)](#roadmap)
@@ -34,7 +36,7 @@ cares about: *what can reach this service, and what happens if it is compromised
 - **Application knowledge base** - YAML entries map container images to what the app is (category,
   sensitivity, recommended exposure), so exposing a password manager is treated differently from
   exposing a blog.
-- **Foot-gun rules** - 11 compose-level checks (PC-001..PC-011) for the misconfigurations that
+- **Foot-gun rules** - 12 compose-level checks (PC-001..PC-012) for the misconfigurations that
   actually hand over homelabs. Every finding explains what was found, why it matters, and how to
   fix it.
 - **A-F grade** - a simple, documented score (start at 100, subtract per finding by severity) you
@@ -192,7 +194,7 @@ already does well. The split:
 | Image CVE scanning | Compose stack as a first-class target |
 | Secrets committed in files | Exposure engine (ports × proxy × networks) |
 | Dockerfile analysis | Application knowledge base |
-| | Compose foot-gun rules (PC-001..PC-011) |
+| | Compose foot-gun rules (PC-001..PC-012) |
 | | Pedagogical, prioritised report with a grade |
 
 When `trivy` is on your PATH, Portcullis runs its three relevant scanners and merges the results as

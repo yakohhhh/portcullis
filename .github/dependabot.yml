@@ -1,0 +1,23 @@
+# Keeps the SHA-pinned actions and the Python dependencies fresh.
+# Updates are grouped so a week's bumps arrive as one reviewable PR each.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      actions:
+        patterns: ["*"]
+    labels: [ci-cd]
+
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      python:
+        patterns: ["*"]
+    labels: [ci-cd]

@@ -3,6 +3,10 @@ name: Release
 # Cut a release by bumping the version in pyproject.toml, updating CHANGELOG.md,
 # then pushing a matching tag: `git tag v0.1.0 && git push origin v0.1.0`.
 # See RELEASING.md for the full checklist and the one-time PyPI setup.
+#
+# Security posture: least-privilege permissions per job, actions pinned by
+# SHA, no persisted git credentials, PyPI trusted publishing (OIDC, no stored
+# token), and signed build provenance attached to the artifacts.
 on:
   push:
     tags: ["v*"]
@@ -13,9 +17,16 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write      # sign the provenance attestation
+      attestations: write  # store it
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
 
@@ -29,8 +40,11 @@ jobs:
           fi
 
       - name: Build sdist and wheel
+        # The toolchain versions come from the "ci" extra in pyproject.toml,
+        # pinned exactly and bumped only through reviewable Dependabot PRs -
+        # the artifacts below get provenance-attested and published as-is.
         run: |
-          python -m pip install --upgrade build twine
+          python -m pip install -e ".[ci]"
           python -m build
           twine check dist/*
 
@@ -40,7 +54,12 @@ jobs:
           /tmp/smoke/bin/pip install dist/*.whl
           /tmp/smoke/bin/portcullis --version
 
-      - uses: actions/upload-artifact@v4
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
+        with:
+          subject-path: dist/*
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: dist
           path: dist/
@@ -48,27 +67,31 @@ jobs:
   publish-pypi:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     environment:
       name: pypi
       url: https://pypi.org/p/portcullis
     permissions:
       id-token: write  # OIDC token for PyPI trusted publishing
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: dist
           path: dist/
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # release/v1
 
   github-release:
     needs: publish-pypi
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: dist
           path: dist/

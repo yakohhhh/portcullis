@@ -41,8 +41,11 @@ Do this once, before the first release:
 The release workflow then:
 
 - verifies the tag matches `pyproject.toml`'s version;
-- builds the sdist and wheel and runs `twine check`;
+- builds the sdist and wheel (toolchain pinned via the `ci` extra) and runs
+  `twine check`;
 - runs an install smoke test (`portcullis --version` from the built wheel);
+- attaches a signed build provenance attestation to the artifacts
+  (verifiable with `gh attestation verify <file> --owner yakohhhh`);
 - publishes to PyPI via trusted publishing;
 - creates a GitHub Release with the notes taken from `CHANGELOG.md`.
 

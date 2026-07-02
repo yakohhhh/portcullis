@@ -1,0 +1,27 @@
+# Optional but recommended: `pipx install pre-commit && pre-commit install`.
+# CI enforces the same checks; the hooks just catch them before the push.
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.9
+    hooks:
+      - id: ruff
+        args: [--fix]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+
+  - repo: local
+    hooks:
+      - id: no-typographic-dashes
+        name: forbid em/en dashes (use plain hyphens)
+        # U+2014 em dash and U+2013 en dash, written as YAML escapes so this
+        # file stays ASCII and the hook does not flag its own configuration.
+        entry: "[\u2014\u2013]"
+        language: pygrep
+        types: [text]
