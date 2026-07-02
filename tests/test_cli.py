@@ -117,6 +117,34 @@ class TestMarkdownFormat:
         assert "Report written to" in result.output
 
 
+class TestHtmlFormat:
+    def test_html_report_on_stdout(self, runner: CliRunner, tmp_path: Path) -> None:
+        stack = write_stack(tmp_path / "stack", CLEAN_COMPOSE)
+        result = runner.invoke(
+            main,
+            ["scan", str(stack), "--no-trivy", "--format", "html"],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+        assert result.output.lstrip().startswith("<!DOCTYPE html>")
+        assert "Portcullis security report" in result.output
+        assert "myapp" in result.output
+
+    def test_html_report_written_to_a_file(self, runner: CliRunner, tmp_path: Path) -> None:
+        stack = write_stack(tmp_path / "stack", CLEAN_COMPOSE)
+        report = tmp_path / "report.html"
+        result = runner.invoke(
+            main,
+            ["scan", str(stack), "--no-trivy", "--format", "html", "-o", str(report)],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+        assert report.is_file()
+        text = report.read_text(encoding="utf-8")
+        assert text.startswith("<!DOCTYPE html>")
+        assert "Report written to" in result.output
+
+
 class TestScanErrors:
     def test_directory_without_compose_file_fails_cleanly(
         self, runner: CliRunner, tmp_path: Path
