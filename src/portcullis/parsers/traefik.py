@@ -33,6 +33,7 @@ from urllib.parse import urlparse
 import yaml
 
 from portcullis.model import RoutingTable, Service, Stack
+from portcullis.parsers._common import address_host, is_loopback, match_service
 
 try:  # Python 3.11+
     import tomllib
@@ -44,7 +45,6 @@ except ModuleNotFoundError:  # pragma: no cover - exercised on 3.10 only
 
 #: Image repository last component identifying the reverse proxy service.
 TRAEFIK_IMAGE_NAME = "traefik"
-_LOOPBACK_HOSTS = {"127.0.0.1", "::1", "localhost"}
 _DYNAMIC_SUFFIXES = (".yml", ".yaml", ".toml")
 
 
@@ -59,7 +59,7 @@ class _Entrypoint:
 
     @property
     def loopback_only(self) -> bool:
-        return _address_host(self.address) in _LOOPBACK_HOSTS
+        return is_loopback(address_host(self.address))
 
 
 @dataclass
@@ -342,7 +342,7 @@ def _resolve_routing(
     for router in config.routers:
         public = _router_is_public(router, config, has_public_entrypoint)
         for host in _router_upstream_hosts(router, config):
-            match = _match_service(host, stack)
+            match = match_service(host, stack)
             if match is None:
                 continue
             (routing.internet_routed if public else routing.host_routed).add(match)
@@ -417,17 +417,6 @@ def _find_traefik_services(stack: Stack) -> dict[str, Service]:
     }
 
 
-def _match_service(host: str, stack: Stack) -> str | None:
-    """Map an upstream host to a compose service key (exact or last segment)."""
-    host = host.strip().lower()
-    if not host:
-        return None
-    for key, service in stack.services.items():
-        if host in (key.lower(), key.rsplit("/", 1)[-1].lower(), service.name.lower()):
-            return key
-    return None
-
-
 def _strip_provider(reference: Any) -> str:
     """``myservice@docker`` / ``myservice@file`` -> ``myservice`` (lower-cased)."""
     return str(reference).split("@", 1)[0].strip().lower()
@@ -438,19 +427,7 @@ def _host_from_target(target: str) -> str | None:
     if "://" in target:
         return urlparse(target).hostname
     # TCP servers use a bare "host:port" address.
-    return _address_host(target) or None
-
-
-def _address_host(address: str) -> str:
-    address = address.strip()
-    if not address:
-        return ""
-    if address.startswith("["):  # [::1]:8080
-        end = address.find("]")
-        return address[1:end] if end != -1 else address
-    if ":" in address:
-        return address.rsplit(":", 1)[0]
-    return address
+    return address_host(target) or None
 
 
 def _as_bool(value: Any) -> bool:

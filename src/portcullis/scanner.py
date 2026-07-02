@@ -11,14 +11,19 @@ Reporters then render the returned :class:`~portcullis.model.ScanResult`.
 
 from __future__ import annotations
 
+import contextlib
 from pathlib import Path
 
 from portcullis import exposure as exposure_engine
 from portcullis import scoring, trivy
-from portcullis.discovery import find_compose_groups, find_traefik_configs
+from portcullis.discovery import (
+    find_caddy_configs,
+    find_compose_groups,
+    find_traefik_configs,
+)
 from portcullis.kb import KnowledgeBase
 from portcullis.model import RoutingTable, ScanResult, Stack
-from portcullis.parsers import traefik
+from portcullis.parsers import caddy, traefik
 from portcullis.parsers.compose import parse_compose_groups
 from portcullis.rules import RuleContext, run_all
 
@@ -63,9 +68,8 @@ def _build_routing(path: Path, stack: Stack) -> RoutingTable:
     scan.
     """
     routing = RoutingTable()
-    try:
-        traefik_files = find_traefik_configs(path)
-        routing.merge(traefik.analyze(stack, traefik_files))
-    except OSError:
-        pass
+    with contextlib.suppress(OSError):
+        routing.merge(traefik.analyze(stack, find_traefik_configs(path)))
+    with contextlib.suppress(OSError):
+        routing.merge(caddy.analyze(stack, find_caddy_configs(path)))
     return routing

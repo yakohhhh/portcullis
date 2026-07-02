@@ -27,9 +27,10 @@ cares about: *what can reach this service, and what happens if it is compromised
 
 - **Exposure engine** - classifies every service as INTERNAL / HOST / LAN / INTERNET by crossing
   three signals: published ports × reverse-proxy routing × `internal: true` networks. Routing is
-  read from compose labels (Traefik, caddy-docker-proxy, nginx-proxy) **and** from Traefik file
-  configuration - `traefik.yml`/`.toml`, `command:` flags, and the dynamic file provider,
-  including `exposedByDefault` and entrypoint bind addresses.
+  read from compose labels (Traefik, caddy-docker-proxy, nginx-proxy) **and** from reverse-proxy
+  file configuration - Traefik (`traefik.yml`/`.toml`, `command:` flags, dynamic file provider,
+  `exposedByDefault`, entrypoint bind addresses) and a plain Caddyfile (site addresses and
+  `reverse_proxy` upstreams, including snippet imports).
 - **Application knowledge base** - YAML entries map container images to what the app is (category,
   sensitivity, recommended exposure), so exposing a password manager is treated differently from
   exposing a blog.
@@ -167,9 +168,9 @@ its own behaviour, and is entirely opt-out with `--no-trivy`.)
 - **M1 - Core scan** (done, v0.1): compose discovery and parsing, exposure engine, rules
   PC-001..PC-011, app knowledge base, A-F grade, terminal and markdown reports, Trivy merge,
   `--fail-on` CI gate.
-- **M2 - Reverse proxy configuration files**: Traefik static (`traefik.yml`/`.toml` and `command:`
-  flags) and dynamic file-provider parsing is **done**; Caddyfile parsing and a wider knowledge
-  base are in progress.
+- **M2 - Reverse proxy configuration files**: Traefik (static `traefik.yml`/`.toml`, `command:`
+  flags, dynamic file provider) and Caddyfile parsing are **done**; a wider knowledge base is in
+  progress.
 - **M3 - HTML report** and a richer Trivy merge.
 - **M4 - GitHub Action** and packaging / PyPI release.
 
