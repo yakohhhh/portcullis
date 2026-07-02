@@ -34,6 +34,10 @@ The classification crosses three signals read from the compose files:
      the docker provider's `exposedByDefault`, and the dynamic file provider for routers and their
      target services. The load-balancer server URLs (`http://<service>:<port>`) name the compose
      services that Traefik routes. See [The Traefik file parser](#the-traefik-file-parser) below.
+   - **Caddyfile** (`src/portcullis/parsers/caddy.py`): each site block's addresses decide whether
+     it is public or loopback-bound, and its `reverse_proxy` upstreams (inline, matcher-prefixed,
+     `to` block form, or pulled in via `import` of a snippet) name the routed compose services. See
+     [The Caddyfile parser](#the-caddyfile-parser) below.
 3. **Internal networks** - a service attached only to `internal: true` networks has no gateway:
    Docker cannot NAT published ports for it, so even a `ports:` entry is unreachable and the
    service stays `INTERNAL`.
@@ -68,14 +72,27 @@ When a service routes through Traefik without a `traefik.enable` label - the rou
 Everything here is defensive: reverse-proxy configuration is untrusted, hand-written input, so a
 malformed file degrades the routing analysis instead of failing the scan.
 
+## The Caddyfile parser
+
+A plain `Caddyfile` (not caddy-docker-proxy labels) is parsed the same way:
+
+- The parser tokenises with brace, quote and comment awareness, then isolates **site blocks** from
+  the global options block and named **snippets**.
+- Each **site address** decides exposure: `vault.example.com`, `http://app…`, `:8080` and
+  `*.example.com` are public (`INTERNET`); `localhost` and `127.0.0.1` sites are loopback-bound, so
+  their upstreams are routed to `HOST` instead.
+- Every **`reverse_proxy` upstream** is collected - inline (`reverse_proxy app:80`),
+  matcher-prefixed (`reverse_proxy /api/* app:80`), the block form with `to` directives, upstreams
+  reached inside `handle`/`route` blocks, and those pulled in through `import` of a snippet. The
+  upstream host (`app` in `app:80` or `http://app:80`) maps back to the compose service `app`.
+
+Unknown directives are ignored; the Caddyfile grammar is large and only routing matters here.
+
 ## Current limits - read this
 
 Portcullis is static analysis over declared configuration. Being honest about what that can and
 cannot know:
 
-- **Caddyfile parsing is not in yet.** Caddy routing is detected from caddy-docker-proxy labels,
-  but a plain Caddyfile is not parsed - a service routed only there will not be classified
-  `INTERNET`. The stub in `src/portcullis/parsers/caddy.py` marks where this lands (milestone 2).
 - **No router knowledge.** Static analysis cannot see whether your router forwards a port, so a
   port published on all interfaces is reported as `LAN` - the safe classification. If the port is
   forwarded, the real exposure is `INTERNET` and every finding on that service is more urgent than

@@ -34,6 +34,12 @@ TRAEFIK_STATIC_BASENAMES = (
     "traefik.toml",
 )
 
+#: Caddyfile names, matched anywhere in the tree.
+CADDYFILE_BASENAMES = (
+    "Caddyfile",
+    "caddyfile",
+)
+
 #: Directories that never contain user infrastructure files.
 IGNORED_DIRS = {
     ".git",
@@ -92,13 +98,22 @@ def find_traefik_configs(path: Path) -> list[Path]:
     Matches only by well-known basename; dynamic file-provider configuration
     is resolved later from the Traefik service's volume mounts.
     """
+    return _find_by_basename(path, TRAEFIK_STATIC_BASENAMES)
+
+
+def find_caddy_configs(path: Path) -> list[Path]:
+    """Return every Caddyfile under ``path``, matched by name."""
+    return _find_by_basename(path, CADDYFILE_BASENAMES)
+
+
+def _find_by_basename(path: Path, names: tuple[str, ...]) -> list[Path]:
     path = path.resolve()
     if path.is_file():
-        return [path] if path.name in TRAEFIK_STATIC_BASENAMES else []
+        return [path] if path.name in names else []
 
     found: list[Path] = []
     for directory in _walk_dirs(path):
-        for name in TRAEFIK_STATIC_BASENAMES:
+        for name in names:
             candidate = directory / name
             if candidate.is_file():
                 found.append(candidate)
