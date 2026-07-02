@@ -57,6 +57,7 @@ cares about: *what can reach this service, and what happens if it is compromised
 | PC-009 | Sensitive application more exposed than recommended | CRITICAL or HIGH (by sensitivity) |
 | PC-010 | Database port published on the host | HIGH |
 | PC-011 | Proxied service also publishes ports directly (proxy bypass) | MEDIUM |
+| PC-012 | Secret passed via `environment:` while the stack uses Docker `secrets:` | LOW |
 
 Full details in [docs/checks.md](docs/checks.md).
 
