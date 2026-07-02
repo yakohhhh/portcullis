@@ -92,8 +92,8 @@ portcullis scan .
 | Option | Default | Description |
 | --- | --- | --- |
 | `PATH` | `.` | A compose file, or a directory walked recursively. |
-| `--format terminal\|markdown` | `terminal` | Report format. |
-| `-o, --output FILE` | stdout | Write the markdown report to a file. |
+| `--format terminal\|markdown\|html` | `terminal` | Report format. |
+| `-o, --output FILE` | stdout | Write the markdown/html report to a file. |
 | `--min-severity LEVEL` | `info` | Hide findings below `info`/`low`/`medium`/`high`/`critical`. |
 | `--fail-on LEVEL` | `never` | Exit with code 1 if any finding is at or above LEVEL (CI gate). |
 | `--trivy` / `--no-trivy` | auto | Force or disable Trivy (default: used when the binary is found). |
@@ -134,10 +134,11 @@ HIGH PC-008 (default POSTGRES_PASSWORD), MEDIUM PC-011 (vaultwarden
 bypasses the proxy via port 8081), LOW PC-005 (mutable `latest` tag).
 ```
 
-Use it as a CI gate:
+Use it as a CI gate, or produce a shareable report:
 
 ```sh
 portcullis scan . --format markdown -o report.md --fail-on high
+portcullis scan . --format html -o report.html   # self-contained, no external requests
 ```
 
 ## Trivy integration
@@ -171,7 +172,8 @@ its own behaviour, and is entirely opt-out with `--no-trivy`.)
 - **M2 - Reverse proxy configuration files**: Traefik (static `traefik.yml`/`.toml`, `command:`
   flags, dynamic file provider) and Caddyfile parsing are **done**; a wider knowledge base is in
   progress.
-- **M3 - HTML report** and a richer Trivy merge.
+- **M3 - Reports and enrichment**: HTML report is **done** (`--format html`, self-contained); a
+  richer Trivy merge (secrets, Dockerfile) is in progress.
 - **M4 - GitHub Action** and packaging / PyPI release.
 
 Then, v2 ideas: Nginx Proxy Manager support, a live reachability probe to confirm exposure from
