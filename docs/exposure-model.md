@@ -38,6 +38,10 @@ The classification crosses three signals read from the compose files:
      it is public or loopback-bound, and its `reverse_proxy` upstreams (inline, matcher-prefixed,
      `to` block form, or pulled in via `import` of a snippet) name the routed compose services. See
      [The Caddyfile parser](#the-caddyfile-parser) below.
+   - **nginx and Nginx Proxy Manager** (`src/portcullis/parsers/nginx.py`): `server` blocks in
+     mounted `.conf` files, where a `proxy_pass http://<service>:<port>` names the routed compose
+     service and the `listen` address decides public vs loopback. For Nginx Proxy Manager, the
+     same is read from its `database.sqlite` (`proxy_host` table: forward host and domain names).
 3. **Internal networks** - a service attached only to `internal: true` networks has no gateway:
    Docker cannot NAT published ports for it, so even a `ports:` entry is unreachable and the
    service stays `INTERNAL`.
