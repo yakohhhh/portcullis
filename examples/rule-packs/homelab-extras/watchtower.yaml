@@ -1,0 +1,43 @@
+# Example Portcullis rule pack. Copy this directory, edit the rules, and load
+# it with:  portcullis scan . --rules ./my-pack
+#
+# See docs/rule-packs.md for the full matcher reference.
+pack:
+  name: homelab-extras
+  version: 0.1.0
+  maintainer: Portcullis example <noreply@example.com>
+
+rules:
+  - id: HLX-WATCHTOWER-EXPOSED
+    title: "'{service}' (Watchtower) is reachable from the network"
+    severity: high
+    match:
+      image: "*/watchtower"
+      exposure: LAN            # fires only when reachable from the LAN or wider
+    description: >
+      '{service}' runs Watchtower, which updates containers by talking to the
+      Docker socket, and it is reachable from the network.
+    risk: >
+      Watchtower needs the Docker daemon, so anything that can reach and
+      influence it is one step from controlling every container on the host.
+      It has no reason to be reachable from outside the host.
+    remediation: >
+      Remove any published port and keep Watchtower on an internal network. It
+      does not serve traffic; it only needs to reach the Docker socket.
+    references:
+      - https://containrrr.dev/watchtower/
+
+  - id: HLX-METRICS-PORT-PUBLISHED
+    title: "'{service}' publishes a metrics port (9090)"
+    severity: low
+    match:
+      published_port: 9090
+    description: >
+      '{service}' publishes port 9090, the conventional Prometheus metrics
+      port, on the host.
+    risk: >
+      Metrics endpoints leak internal details (targets, versions, sometimes
+      credentials in labels) and are rarely authenticated.
+    remediation: >
+      Bind the metrics port to loopback (127.0.0.1:9090:9090) or keep it on an
+      internal network scraped by Prometheus over the Docker network.
