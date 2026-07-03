@@ -8,6 +8,7 @@ from the same directory.
 
 from __future__ import annotations
 
+import contextlib
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -38,6 +39,30 @@ TRAEFIK_STATIC_BASENAMES = (
 CADDYFILE_BASENAMES = (
     "Caddyfile",
     "caddyfile",
+)
+
+#: nginx configuration files have arbitrary names; we collect ``.conf`` files
+#: living in directories that conventionally hold reverse-proxy config (raw
+#: nginx and Nginx Proxy Manager's generated ``proxy_host`` files), plus the
+#: two canonical basenames. Files that turn out not to route to a known
+#: compose service contribute nothing (see the nginx parser).
+NGINX_CONFIG_BASENAMES = (
+    "nginx.conf",
+    "default.conf",
+)
+NGINX_CONFIG_DIRS = {
+    "nginx",
+    "conf.d",
+    "sites-enabled",
+    "sites-available",
+    "proxy_host",
+    "vhost.d",
+    "servers",
+}
+
+#: Nginx Proxy Manager's SQLite database (its default filename).
+NPM_DATABASE_BASENAMES = (
+    "database.sqlite",
 )
 
 #: Directories that never contain user infrastructure files.
@@ -104,6 +129,42 @@ def find_traefik_configs(path: Path) -> list[Path]:
 def find_caddy_configs(path: Path) -> list[Path]:
     """Return every Caddyfile under ``path``, matched by name."""
     return _find_by_basename(path, CADDYFILE_BASENAMES)
+
+
+def find_nginx_configs(path: Path) -> list[Path]:
+    """Return candidate nginx / NPM ``.conf`` files under ``path``.
+
+    Collects the canonical basenames plus every ``.conf`` in a conventional
+    nginx directory. Precision comes from the parser, which ignores any file
+    that does not route to a known compose service.
+    """
+    path = path.resolve()
+    if path.is_file():
+        if path.name in NGINX_CONFIG_BASENAMES or (
+            path.suffix == ".conf" and path.parent.name in NGINX_CONFIG_DIRS
+        ):
+            return [path]
+        return []
+
+    found: list[Path] = []
+    for directory in _walk_dirs(path):
+        for name in NGINX_CONFIG_BASENAMES:
+            candidate = directory / name
+            if candidate.is_file():
+                found.append(candidate)
+        if directory.name in NGINX_CONFIG_DIRS:
+            with contextlib.suppress(OSError):
+                found.extend(
+                    child for child in sorted(directory.iterdir())
+                    if child.is_file() and child.suffix == ".conf"
+                    and child.name not in NGINX_CONFIG_BASENAMES
+                )
+    return found
+
+
+def find_npm_databases(path: Path) -> list[Path]:
+    """Return Nginx Proxy Manager SQLite databases under ``path``."""
+    return _find_by_basename(path, NPM_DATABASE_BASENAMES)
 
 
 def _find_by_basename(path: Path, names: tuple[str, ...]) -> list[Path]:

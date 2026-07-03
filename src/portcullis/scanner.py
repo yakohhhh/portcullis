@@ -19,11 +19,13 @@ from portcullis import scoring, trivy
 from portcullis.discovery import (
     find_caddy_configs,
     find_compose_groups,
+    find_nginx_configs,
+    find_npm_databases,
     find_traefik_configs,
 )
 from portcullis.kb import KnowledgeBase
 from portcullis.model import RoutingTable, ScanResult, Stack
-from portcullis.parsers import caddy, traefik
+from portcullis.parsers import caddy, nginx, traefik
 from portcullis.parsers.compose import parse_compose_groups
 from portcullis.rules import RuleContext, run_all
 
@@ -72,4 +74,6 @@ def _build_routing(path: Path, stack: Stack) -> RoutingTable:
         routing.merge(traefik.analyze(stack, find_traefik_configs(path)))
     with contextlib.suppress(OSError):
         routing.merge(caddy.analyze(stack, find_caddy_configs(path)))
+    with contextlib.suppress(OSError):
+        routing.merge(nginx.analyze(stack, find_nginx_configs(path), find_npm_databases(path)))
     return routing

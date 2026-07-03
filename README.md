@@ -31,8 +31,9 @@ cares about: *what can reach this service, and what happens if it is compromised
   three signals: published ports × reverse-proxy routing × `internal: true` networks. Routing is
   read from compose labels (Traefik, caddy-docker-proxy, nginx-proxy) **and** from reverse-proxy
   file configuration - Traefik (`traefik.yml`/`.toml`, `command:` flags, dynamic file provider,
-  `exposedByDefault`, entrypoint bind addresses) and a plain Caddyfile (site addresses and
-  `reverse_proxy` upstreams, including snippet imports).
+  `exposedByDefault`, entrypoint bind addresses), a plain Caddyfile (site addresses and
+  `reverse_proxy` upstreams, including snippet imports), raw nginx `server` blocks, and Nginx Proxy
+  Manager (its `database.sqlite` or generated configs).
 - **Application knowledge base** - YAML entries map container images to what the app is (category,
   sensitivity, recommended exposure), so exposing a password manager is treated differently from
   exposing a blog.
@@ -229,8 +230,9 @@ its own behaviour, and is entirely opt-out with `--no-trivy`.)
   Action, macOS/Windows CI, and automated PyPI releases via trusted publishing (see
   [RELEASING.md](RELEASING.md)).
 
-Then, v2 ideas: Nginx Proxy Manager support, a live reachability probe to confirm exposure from
-the outside, and a web report.
+- **v2** (in progress): nginx and Nginx Proxy Manager routing (done); still ahead - a live
+  reachability probe to confirm exposure from the outside, a web report, patch suggestions, and
+  community rule packs.
 
 ## Contributing
 
