@@ -16,7 +16,6 @@ from portcullis.model import Exposure, Finding, RoutingTable, Stack
 
 if TYPE_CHECKING:
     from portcullis.kb import KnowledgeBase
-    from portcullis.rules.packs import PackRule
 
 RuleFunc = Callable[["RuleContext"], Iterable[Finding]]
 
@@ -31,8 +30,10 @@ class RuleContext:
     exposures: dict[str, Exposure] = field(default_factory=dict)
     kb: KnowledgeBase | None = None
     routing: RoutingTable = field(default_factory=RoutingTable)
-    #: Community rule packs loaded from ``--rules`` directories.
-    packs: list[PackRule] = field(default_factory=list)
+    #: Community rule packs (``portcullis.rules.packs.PackRule`` instances)
+    #: loaded from ``--rules`` directories. Left untyped to keep this module
+    #: free of a (type-only) import cycle with ``packs``.
+    packs: list = field(default_factory=list)
 
     def exposure_of(self, service_name: str) -> Exposure:
         return self.exposures.get(service_name, Exposure.UNKNOWN)
