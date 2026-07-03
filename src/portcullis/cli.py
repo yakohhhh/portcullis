@@ -48,11 +48,14 @@ def main() -> None:
 @click.option("--trivy/--no-trivy", "use_trivy", default=None,
               help="Force or disable the Trivy integration (default: use it when "
                    "the binary is installed).")
+@click.option("--rules", "rule_packs", multiple=True,
+              type=click.Path(exists=True, file_okay=False, path_type=Path),
+              help="Directory of community rule packs to load (repeatable).")
 def scan(path: Path, fmt: str, output: Path | None, min_severity: str,
-         fail_on: str, use_trivy: bool | None) -> None:
+         fail_on: str, use_trivy: bool | None, rule_packs: tuple[Path, ...]) -> None:
     """Scan PATH (a compose file or a directory tree) and print the report."""
     try:
-        result = scanner.scan(path, use_trivy=use_trivy)
+        result = scanner.scan(path, use_trivy=use_trivy, rule_packs=list(rule_packs))
     except (DiscoveryError, ComposeParseError) as exc:
         raise click.ClickException(str(exc)) from exc
 

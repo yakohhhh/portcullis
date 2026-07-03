@@ -28,13 +28,18 @@ from portcullis.model import RoutingTable, ScanResult, Stack
 from portcullis.parsers import caddy, nginx, traefik
 from portcullis.parsers.compose import parse_compose_groups
 from portcullis.rules import RuleContext, run_all
+from portcullis.rules.packs import load_packs
 
 
-def scan(path: Path, *, use_trivy: bool | None = None) -> ScanResult:
+def scan(
+    path: Path, *, use_trivy: bool | None = None, rule_packs: list[Path] | None = None
+) -> ScanResult:
     """Scan ``path`` (a compose file or a directory tree) and return the result.
 
     ``use_trivy``: ``True`` forces Trivy (error if missing is silently
     degraded), ``False`` disables it, ``None`` auto-detects the binary.
+    ``rule_packs``: directories of community rule packs to load in addition to
+    the built-in checks.
     """
     root = path.resolve() if path.is_dir() else path.resolve().parent
     groups = find_compose_groups(path)
@@ -43,7 +48,15 @@ def scan(path: Path, *, use_trivy: bool | None = None) -> ScanResult:
     routing = _build_routing(path, stack)
     exposures = exposure_engine.classify(stack, routing)
     kb = KnowledgeBase.load_default()
-    context = RuleContext(stack=stack, exposures=exposures, kb=kb, routing=routing)
+
+    packs = []
+    if rule_packs:
+        packs, pack_warnings = load_packs(rule_packs)
+        stack.warnings.extend(pack_warnings)
+
+    context = RuleContext(
+        stack=stack, exposures=exposures, kb=kb, routing=routing, packs=packs
+    )
     findings = run_all(context)
 
     if use_trivy is None:
