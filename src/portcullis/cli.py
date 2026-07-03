@@ -8,6 +8,7 @@ from pathlib import Path
 import click
 
 from portcullis import __version__, history, patches, scanner
+from portcullis import probe as probe_mod
 from portcullis.discovery import DiscoveryError
 from portcullis.model import Severity
 from portcullis.parsers.compose import ComposeParseError
@@ -134,6 +135,97 @@ def report(path: Path, output: Path, min_severity: str, use_trivy: bool | None,
 
     if serve:
         _serve(output, port)
+
+
+@main.command()
+@click.argument("path", type=click.Path(exists=True, path_type=Path), default=".")
+@click.option("--host", "external_host", default=None,
+              help="Probe this host (your own infrastructure) from outside instead of "
+                   "checking localhost. Only the stack's published ports are tested.")
+@click.option("--timeout", type=float, default=2.0, show_default=True,
+              help="Per-port connection timeout, in seconds.")
+@click.option("--json", "as_json", is_flag=True, help="Emit the probe results as JSON.")
+@click.option("--yes", is_flag=True, help="Skip the consent confirmation.")
+@click.option("--trivy/--no-trivy", "use_trivy", default=False,
+              help="Whether to also run Trivy for the underlying scan.")
+def probe(path: Path, external_host: str | None, timeout: float, as_json: bool,
+          yes: bool, use_trivy: bool | None) -> None:
+    """Actively check which of the stack's published ports really answer.
+
+    Opt-in. Only ports declared in the scanned compose stack are tested - never
+    an arbitrary host or port. Local mode checks 127.0.0.1; --host tests your
+    own infrastructure from outside.
+    """
+    try:
+        result = scanner.scan(path, use_trivy=use_trivy)
+    except (DiscoveryError, ComposeParseError) as exc:
+        raise click.ClickException(str(exc)) from exc
+
+    targets = probe_mod.collect_targets(result.stack, result.exposures,
+                                        external_host=external_host)
+    if not targets:
+        click.echo("No published ports in the stack to probe.", err=True)
+        return
+
+    where = external_host if external_host else "127.0.0.1 (localhost)"
+    click.echo(f"About to open a TCP connection to {len(targets)} port(s) on {where}. "
+               "Only ports your compose stack declares are tested.", err=True)
+    if external_host and not yes and not click.confirm(
+        f"Confirm {external_host} is infrastructure you own and are authorised to test"
+    ):
+        raise click.ClickException("Aborted.")
+
+    outcomes = probe_mod.run(targets, timeout=timeout)
+    if as_json:
+        click.echo(_probe_json(outcomes))
+    else:
+        _render_probe(outcomes, result.findings)
+
+
+def _probe_json(outcomes) -> str:
+    import json as _json
+
+    return _json.dumps({
+        "results": [
+            {
+                "service": o.target.service,
+                "host": o.target.host,
+                "port": o.target.port,
+                "mode": o.target.mode,
+                "predicted": str(o.target.predicted),
+                "reachable": o.reachable,
+                "detail": o.detail,
+                "verdict": o.verdict,
+            }
+            for o in outcomes
+        ]
+    }, indent=2)
+
+
+def _render_probe(outcomes, findings) -> None:
+    from rich.console import Console
+    from rich.table import Table
+
+    console = Console()
+    table = Table(title="Reachability probe")
+    table.add_column("Service")
+    table.add_column("Target")
+    table.add_column("Predicted")
+    table.add_column("Observed")
+    table.add_column("Verdict")
+    for o in outcomes:
+        observed = "[green]open[/green]" if o.reachable else f"[dim]{o.detail}[/dim]"
+        table.add_row(o.target.service, f"{o.target.host}:{o.target.port}",
+                      str(o.target.predicted), observed, o.verdict)
+    console.print(table)
+
+    confirmed = probe_mod.confirmed_services(outcomes)
+    if confirmed:
+        console.print("\n[bold red]Confirmed reachable[/bold red] - findings on these services "
+                      "are not hypothetical:")
+        for finding, note in probe_mod.annotate_findings(findings, outcomes):
+            if note == "confirmed reachable by the probe":
+                console.print(f"  [red]![/red] {finding.rule_id} {finding.title}")
 
 
 def _serve(report_path: Path, port: int) -> None:
