@@ -98,6 +98,10 @@ portcullis scan .
 # or an interactive HTML report (filterable findings, exposure graph, score trend):
 portcullis report . -o report.html      # open report.html in a browser
 portcullis report . --serve             # or serve it on http://127.0.0.1:8765
+
+# optionally, confirm what actually answers (opt-in, only the stack's declared ports):
+portcullis probe .                      # local check of 127.0.0.1
+portcullis probe . --host my-server.example.com   # from your own external vantage point
 ```
 
 Requires Python 3.10+. Runs on Linux (the primary target), macOS and Windows - the test suite runs
@@ -236,9 +240,10 @@ its own behaviour, and is entirely opt-out with `--no-trivy`.)
   Action, macOS/Windows CI, and automated PyPI releases via trusted publishing (see
   [RELEASING.md](RELEASING.md)).
 
-- **v2** (in progress): nginx and Nginx Proxy Manager routing, community rule packs (`--rules`),
-  patch suggestions (`--suggest-patches`), and an interactive web report (`portcullis report`) are
-  done; still ahead - a live reachability probe to confirm exposure from the outside.
+- **v2** (done): nginx and Nginx Proxy Manager routing, community rule packs (`--rules`), patch
+  suggestions (`--suggest-patches`), an interactive web report (`portcullis report`), and an
+  opt-in live reachability probe (`portcullis probe`) that confirms which published ports actually
+  answer - locally, or from your own external vantage point.
 
 ## Contributing
 
