@@ -72,6 +72,7 @@ def scan(
         findings=findings,
         score=total,
         grade=scoring.grade(total),
+        routing=routing,
     )
 
 

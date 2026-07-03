@@ -228,3 +228,5 @@ class ScanResult:
     findings: list[Finding]
     score: int
     grade: str
+    #: The reverse-proxy routing used for classification (for the graph view).
+    routing: RoutingTable = field(default_factory=RoutingTable)

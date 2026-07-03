@@ -94,6 +94,10 @@ Then point it at a compose file or a directory tree (e.g. your homelab Git repos
 
 ```sh
 portcullis scan .
+
+# or an interactive HTML report (filterable findings, exposure graph, score trend):
+portcullis report . -o report.html      # open report.html in a browser
+portcullis report . --serve             # or serve it on http://127.0.0.1:8765
 ```
 
 Requires Python 3.10+. Runs on Linux (the primary target), macOS and Windows - the test suite runs
@@ -233,8 +237,8 @@ its own behaviour, and is entirely opt-out with `--no-trivy`.)
   [RELEASING.md](RELEASING.md)).
 
 - **v2** (in progress): nginx and Nginx Proxy Manager routing, community rule packs (`--rules`),
-  and patch suggestions (`--suggest-patches`) are done; still ahead - a live reachability probe to
-  confirm exposure from the outside, and an interactive web report.
+  patch suggestions (`--suggest-patches`), and an interactive web report (`portcullis report`) are
+  done; still ahead - a live reachability probe to confirm exposure from the outside.
 
 ## Contributing
 
