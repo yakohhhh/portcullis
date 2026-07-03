@@ -164,3 +164,20 @@ Ground rules:
 - Keep PRs focused: one rule, one KB entry, or one fix per PR.
 - Make sure `pytest` and `ruff check src tests` pass; describe *why* the change is right, not just
   what it does.
+
+## Contribution license terms
+
+Portcullis is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE), with paid
+commercial licenses offered separately ([COMMERCIAL.md](COMMERCIAL.md)). So that this model can
+work, contributions need a slightly broader grant than the project license itself:
+
+By submitting a contribution (pull request, patch, or knowledge base entry), you agree that:
+
+1. you wrote the contribution yourself, or have the right to submit it;
+2. your contribution is licensed to the project under the project's license; and
+3. you grant the maintainer a perpetual, worldwide, non-exclusive, royalty-free right to use,
+   modify, distribute and **relicense** your contribution, including under commercial licenses.
+
+You keep the copyright on your work; this grant is what allows the project to remain free for
+individuals while offering commercial terms to companies. If you cannot agree to this (for
+example, your employer owns your work), please say so in the PR instead of submitting.

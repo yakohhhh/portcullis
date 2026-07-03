@@ -5,7 +5,7 @@
 [![CI](https://github.com/yakohhhh/portcullis/actions/workflows/ci.yml/badge.svg)](https://github.com/yakohhhh/portcullis/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/yakohhhh/portcullis/actions/workflows/codeql.yml/badge.svg)](https://github.com/yakohhhh/portcullis/actions/workflows/codeql.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/yakohhhh/portcullis/badge)](https://scorecard.dev/viewer/?uri=github.com/yakohhhh/portcullis)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![License: PolyForm Noncommercial](https://img.shields.io/badge/license-PolyForm%20Noncommercial-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
 [![Status: alpha](https://img.shields.io/badge/status-alpha-orange.svg)](#roadmap)
 
@@ -240,4 +240,11 @@ Python required.
 
 ## License
 
-[MIT](LICENSE).
+[PolyForm Noncommercial 1.0.0](LICENSE) - **free for individuals** (homelabs, hobby projects,
+research, study) **and for noncommercial organizations** (charities, schools, public
+institutions). **Companies and any other commercial use need a paid commercial license**: see
+[COMMERCIAL.md](COMMERCIAL.md).
+
+To be precise about the words: the source is public and contributions are welcome, but this is a
+*source-available* license, not an OSI-approved open source one. Versions published before the
+license switch remain MIT (see the git history).
