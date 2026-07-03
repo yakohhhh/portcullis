@@ -10,6 +10,23 @@ breaking changes; the JSON report carries its own `schema_version` (see
 
 ## [Unreleased]
 
+### Added
+
+- Reverse-proxy routing from **nginx** `server` blocks and **Nginx Proxy
+  Manager** (its `database.sqlite` or generated configs).
+- **Community rule packs**: load extra data-driven YAML rules with `--rules`
+  (see [docs/rule-packs.md](docs/rule-packs.md)).
+- **Patch suggestions**: `--suggest-patches` writes mechanical fixes as a
+  reviewable unified diff; Portcullis never applies them itself.
+- **Interactive web report**: `portcullis report` builds a self-contained
+  HTML report with filterable/searchable findings, an exposure graph, and a
+  local score trend; `--serve` serves it on localhost.
+- **Live reachability probe**: opt-in `portcullis probe` confirms which of the
+  stack's declared ports actually answer (local or from your own external
+  host), with strict safety rails.
+- A CI/CD hardening pass (SHA-pinned actions, CodeQL, OpenSSF Scorecard,
+  dependency review, coverage and workflow-security gates, branch protection).
+
 ### Changed
 
 - **License**: switched from MIT to the
