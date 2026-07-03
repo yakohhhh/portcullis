@@ -10,6 +10,15 @@ breaking changes; the JSON report carries its own `schema_version` (see
 
 ## [Unreleased]
 
+### Changed
+
+- **License**: switched from MIT to the
+  [PolyForm Noncommercial License 1.0.0](LICENSE). Portcullis stays free for
+  individuals and noncommercial organizations; commercial use now requires a
+  paid license (see [COMMERCIAL.md](COMMERCIAL.md)). Versions before this
+  change remain MIT. Contributions are accepted under the grant described in
+  [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## [0.1.0] - Unreleased
 
 First public release.

@@ -8,7 +8,7 @@ version = "0.1.0.dev0"
 description = "Security auditor for self-hosted infrastructures - see what your stack really exposes to the Internet, and how to fix it."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = { text = "PolyForm-Noncommercial-1.0.0" }
 authors = [{ name = "yakohhhh" }]
 keywords = [
     "security",
@@ -24,7 +24,7 @@ classifiers = [
     "Environment :: Console",
     "Intended Audience :: System Administrators",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
+    "License :: Free for non-commercial use",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
