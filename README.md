@@ -108,6 +108,7 @@ on all three in CI.
 | `--fail-on LEVEL` | `never` | Exit with code 1 if any finding is at or above LEVEL (CI gate). |
 | `--trivy` / `--no-trivy` | auto | Force or disable Trivy (default: used when the binary is found). |
 | `--rules DIR` | - | Load a community rule pack directory (repeatable). See [docs/rule-packs.md](docs/rule-packs.md). |
+| `--suggest-patches [FILE]` | - | Write mechanical fixes as a unified diff (default `portcullis.patch`). Review and `git apply` yourself - Portcullis never edits your files. |
 
 ### Sample output
 
@@ -231,9 +232,9 @@ its own behaviour, and is entirely opt-out with `--no-trivy`.)
   Action, macOS/Windows CI, and automated PyPI releases via trusted publishing (see
   [RELEASING.md](RELEASING.md)).
 
-- **v2** (in progress): nginx and Nginx Proxy Manager routing and community rule packs (`--rules`)
-  are done; still ahead - a live reachability probe to confirm exposure from the outside, a web
-  report, and patch suggestions.
+- **v2** (in progress): nginx and Nginx Proxy Manager routing, community rule packs (`--rules`),
+  and patch suggestions (`--suggest-patches`) are done; still ahead - a live reachability probe to
+  confirm exposure from the outside, and an interactive web report.
 
 ## Contributing
 
