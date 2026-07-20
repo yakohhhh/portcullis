@@ -50,7 +50,7 @@ dev = [
 # upstream release cannot change CI behaviour without a reviewable Dependabot
 # PR (this table is watched by the pip ecosystem in .github/dependabot.yml).
 ci = [
-    "zizmor==1.26.1",
+    "zizmor==1.27.0",
     "build==1.5.0",
     "twine==6.2.0",
 ]
